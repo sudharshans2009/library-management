@@ -20,11 +20,13 @@ import {
   UserCircle,
   X,
 } from "lucide-react";
-import { ThemeSwitcherButton } from "./theme-switcher-button";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { ThemeSwitcher } from "./theme-switcher";
+import { authClient } from "@/lib/auth/client";
+const { useSession } = authClient;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
+  const session = useSession();
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -36,21 +38,36 @@ export default function Navbar() {
     <nav
       className={cn(
         "fixed top-0 w-full px-5 py-6 z-50 transition-all duration-500",
-        scrolled ? "bg-primary/10 backdrop-blur-md shadow-lg" : "bg-primary/0",
+        scrolled ? "bg-primary/10 backdrop-blur-md shadow-lg" : "bg-primary/0"
       )}
     >
       <div className="w-full h-full flex items-center justify-between max-w-7xl xl:mx-auto">
         <Link className="text-2xl font-bold text-primary" href="/">
           SS.library
         </Link>
-        <div className="flex items-center gap-4">
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <ThemeSwitcherButton />
+        <div className="flex items-center gap-4 h-9">
+          {session.data?.user ? (
+            <Link href="/account" className="h-9">
+              <Button variant="outline" size="sm" className="h-9">
+                <UserCircle className="w-4 h-4 mr-2" />
+                Account
+              </Button>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-2 h-9">
+              <Link href="/sign-in" className="h-9">
+                <Button variant="outline" size="sm" className="h-9">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up" className="h-9">
+                <Button size="sm" className="h-9">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          )}
+          <ThemeSwitcher />
           <Drawer direction="right">
             <DrawerTrigger asChild>
               <Button variant="outline" size="icon">
@@ -104,7 +121,7 @@ export default function Navbar() {
                       <Link
                         href={item.href}
                         className={cn(
-                          "text-lg font-medium text-muted-foreground hover:text-primary transition-colors",
+                          "text-lg font-medium text-muted-foreground hover:text-primary transition-colors"
                         )}
                       >
                         <item.icon className="inline-block mr-2 w-5 h-5" />
@@ -114,46 +131,49 @@ export default function Navbar() {
                   ))}
                 </div>
                 <div className="flex flex-col gap-5 mt-8">
-                  <SignedOut>
-                    <DrawerClose asChild>
-                      <Link href="/sign-up">
-                        <Button size="lg" className="w-full">
-                          Sign Up
-                        </Button>
-                      </Link>
-                    </DrawerClose>
-                    <DrawerClose asChild>
-                      <Link href="/sign-in">
-                        <Button
-                          variant="secondary"
-                          size="lg"
-                          className="w-full"
-                        >
-                          Sign In
-                        </Button>
-                      </Link>
-                    </DrawerClose>
-                  </SignedOut>
-                  <SignedIn>
-                    <DrawerClose asChild>
-                      <Link href="/dashboard">
-                        <Button size="lg" className="w-full">
-                          Dashboard
-                        </Button>
-                      </Link>
-                    </DrawerClose>
-                    <DrawerClose asChild>
-                      <Link href="/account">
-                        <Button
-                          variant="secondary"
-                          size="lg"
-                          className="w-full"
-                        >
-                          Account
-                        </Button>
-                      </Link>
-                    </DrawerClose>
-                  </SignedIn>
+                  {session.data?.user ? (
+                    <>
+                      <DrawerClose asChild>
+                        <Link href="/sign-up">
+                          <Button size="lg" className="w-full">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </DrawerClose>
+                      <DrawerClose asChild>
+                        <Link href="/sign-in">
+                          <Button
+                            variant="secondary"
+                            size="lg"
+                            className="w-full"
+                          >
+                            Sign In
+                          </Button>
+                        </Link>
+                      </DrawerClose>
+                    </>
+                  ) : (
+                    <>
+                      <DrawerClose asChild>
+                        <Link href="/dashboard">
+                          <Button size="lg" className="w-full">
+                            Dashboard
+                          </Button>
+                        </Link>
+                      </DrawerClose>
+                      <DrawerClose asChild>
+                        <Link href="/account">
+                          <Button
+                            variant="secondary"
+                            size="lg"
+                            className="w-full"
+                          >
+                            Account
+                          </Button>
+                        </Link>
+                      </DrawerClose>
+                    </>
+                  )}
                 </div>
               </div>
             </DrawerContent>

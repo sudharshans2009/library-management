@@ -86,7 +86,7 @@ export const verification = pgTable("verification", {
 });
 
 // Extended user table for your application
-export const users = pgTable("users", {
+export const config = pgTable("config", {
   id: text("id").notNull().primaryKey(),
   fullName: varchar("full_name", { length: 255 }).notNull(),
   status: STATUS_ENUM("status").default("PENDING"),
@@ -123,7 +123,7 @@ export const books = pgTable("books", {
 export const borrowRecords = pgTable("borrow_records", {
   id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
   userId: text("user_id")
-    .references(() => users.id)
+    .references(() => user.id)
     .notNull(),
   bookId: uuid("book_id")
     .references(() => books.id)

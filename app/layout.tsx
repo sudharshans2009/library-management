@@ -2,7 +2,7 @@ import React from "react";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme";
-import "./styles.css";
+import "./globals.css";
 import Navbar from "@/components/navbar";
 import { QueryProvider } from "@/components/providers/query";
 import { Toaster } from "@/components/ui/sonner";

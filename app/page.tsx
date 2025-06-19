@@ -1,103 +1,72 @@
-import Image from "next/image";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Book } from "lucide-react";
+import { Background } from "@/components/background";
+// import BooksList from "@/components/book-list";
 
-export default function Home() {
+interface HomePageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
+      <Background />
+      <div className="flex flex-col items-center max-w-7xl mx-auto">
+        <section
+          id="home"
+          className="relative w-full h-full pt-24 flex flex-col items-center justify-center"
+        >
+          <div className="w-full flex flex-col items-center lg:items-start gap-5">
+            <span className="inline-flex items-center gap-4 px-4 py-2 bg-primary/20 rounded-md">
+              <Book className="w-4 h-4" />
+              Find your next read
+            </span>
+            <h1 className="text-5xl lg:text-7xl font-bold leading-tight text-center lg:text-left max-w-4xl">
+              Welcome to <span className="text-primary">SS.library</span>
+            </h1>
+            <p className="text-lg lg:text-xl text-center lg:text-left leading-relaxed text-muted-foreground max-w-3xl">
+              A place to manage books that you have borrowed, read, or want to
+              read. Keep track of your reading progress, discover new titles,
+              and organize your personal library collection.
+            </p>
+            <div className="flex flex-col items-center justify-center md:flex-row mt-10 gap-5">
+              <Link href="/dashboard">
+                <Button size="2xl">Go to Dashboard</Button>
+              </Link>
+              <Link href="/books">
+                <Button variant="secondary" size="2xl">
+                  View Books
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-10 lg:justify-start">
+              <div className="flex -space-x-3">
+                {[...Array(5)].map((_, index) => (
+                  <div
+                    className="w-12 h-12 border border-primary rounded-full bg-primary/20"
+                    key={index}
+                  ></div>
+                ))}
+              </div>
+              <div className="text-muted-foreground">
+                <span className="font-semibold">500+ books</span> available
+                <span className="hidden lg:inline"> in the library</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        {/* <BooksList
+          searchParams={await searchParams}
+          showTitle={true}
+          showDescription={true}
+          className="pt-24"
+        /> */}
+      </div>
+    </main>
   );
 }
