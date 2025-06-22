@@ -10,9 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Settings, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -99,7 +99,7 @@ export default async function DashboardPage() {
           id="setup"
           className="relative w-full h-full pt-24 flex gap-8 flex-col lg:flex-row items-start justify-center"
         >
-          <div className="w-full sticky top-28 flex-1 flex flex-col items-center gap-5">
+          <div className="w-full lg:sticky top-28 flex-1 flex flex-col items-center gap-5">
             {userConfig.status === "SUSPENDED" && (
               <div className="mb-6 p-4 border border-red-200 bg-red-50 rounded-lg">
                 <div className="flex items-center gap-3">
@@ -133,7 +133,13 @@ export default async function DashboardPage() {
                 </div>
               </div>
             )}
-            <Card className="w-full">
+            <Card className="relative w-full">
+              <Link href="/dashboard/account" className="absolute top-2 right-2">
+                <Button size="icon">
+                  <p className="sr-only">Account</p>
+                  <Shield className="w-4 h-4" />
+                </Button>
+              </Link>
               <CardHeader className="text-center">
                 <CardTitle>{userConfig.fullName}</CardTitle>
                 <CardDescription>
@@ -172,17 +178,13 @@ export default async function DashboardPage() {
                     <span className="text-base font-medium text-muted-foreground">
                       Class
                     </span>
-                    <Badge variant="outline">
-                      {userConfig.class}
-                    </Badge>
+                    <Badge variant="outline">{userConfig.class}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-base font-medium text-muted-foreground">
                       Section
                     </span>
-                    <Badge variant="outline">
-                      {userConfig.section}
-                    </Badge>
+                    <Badge variant="outline">{userConfig.section}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-base font-medium text-muted-foreground">
@@ -196,14 +198,16 @@ export default async function DashboardPage() {
               </CardContent>
             </Card>
             <div className="w-full flex gap-4">
-              {userConfig.role === "USER" && userConfig.status === "APPROVED" && (
-                <Link href="/books" className="w-full">
-                  <Button size="xl" className="w-full">
-                    Request a Book
-                  </Button>
-                </Link>
-              )}
-              {(userConfig.role === "ADMIN" || userConfig.role === "MODERATOR") && (
+              {userConfig.role === "USER" &&
+                userConfig.status === "APPROVED" && (
+                  <Link href="/books" className="w-full">
+                    <Button size="xl" className="w-full">
+                      Request a Book
+                    </Button>
+                  </Link>
+                )}
+              {(userConfig.role === "ADMIN" ||
+                userConfig.role === "MODERATOR") && (
                 <Link href="/manage" className="w-full">
                   <Button size="xl" className="w-full">
                     Manage Library
@@ -230,12 +234,15 @@ export default async function DashboardPage() {
               ))
             ) : (
               <div className="col-span-2 text-center py-8">
-                <p className="text-muted-foreground">No borrow records found.</p>
-                {userConfig.status === "APPROVED" && userConfig.role === "USER" && (
-                  <Link href="/books" className="mt-4 inline-block">
-                    <Button>Browse Books</Button>
-                  </Link>
-                )}
+                <p className="text-muted-foreground">
+                  No borrow records found.
+                </p>
+                {userConfig.status === "APPROVED" &&
+                  userConfig.role === "USER" && (
+                    <Link href="/books" className="mt-4 inline-block">
+                      <Button>Browse Books</Button>
+                    </Link>
+                  )}
               </div>
             )}
           </div>

@@ -1,4 +1,3 @@
-// filepath: c:\Users\bsoun\Documents\Codebase\library-management-v2\seed\books.ts
 import dotenv from "dotenv";
 import path from "path";
 import { existsSync } from "fs";

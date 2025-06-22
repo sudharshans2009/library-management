@@ -28,11 +28,6 @@ export function AddBookButton({ bookId }: { bookId: number | string }) {
 
       return data;
     },
-    onMutate: () => {
-      toast.loading("Borrowing book...", {
-        id: `add-book-${bookId}`,
-      });
-    },
     onSuccess: (data) => {
       const isPending = data.borrowRecord.status === "PENDING";
       if (data.redirect) {
@@ -98,6 +93,9 @@ export function AddBookButton({ bookId }: { bookId: number | string }) {
   });
 
   const handleAddBook = () => {
+    toast.loading("Borrowing book...", {
+      id: `add-book-${bookId}`,
+    });
     mutate(false);
   };
 

@@ -67,6 +67,18 @@ export default function SetupPage() {
     },
   });
 
+  if (isPending) {
+    return (
+      <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
+        <Background />
+        <div className="flex flex-col items-center justify-center max-w-7xl mx-auto min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading setup...</p>
+        </div>
+      </main>
+    );
+  }
+
   const onSubmit = (values: UserConfigSchemaType) => {
     toast.loading("Setting up user...", {
       id: "setup-user",
@@ -126,7 +138,7 @@ export default function SetupPage() {
                                 <SelectItem key={cls} value={cls}>
                                   {cls}
                                 </SelectItem>
-                              ),
+                              )
                             )}
                           </SelectGroup>
                         </SelectContent>

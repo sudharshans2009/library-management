@@ -104,8 +104,8 @@ export default async function RecordCard({ record }: RecordCardProps) {
         </CardContent>
       </Card>
       <div className="mt-4 text-center bg-card p-4 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold truncate">{book.title}</h3>
-        <p className="text-sm text-muted-foreground truncate">
+        <h3 className="text-lg max-w-xs sm:max-w-full mx-auto font-semibold truncate">{book.title}</h3>
+        <p className="text-sm max-w-xs sm:max-w-full mx-auto text-muted-foreground truncate">
           {book.author || "Unknown Author"}
         </p>
         <div className="mt-2 text-xs text-muted-foreground">

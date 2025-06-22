@@ -96,6 +96,18 @@ export default function SettingsPage() {
     },
   });
 
+  if (isPending) {
+    return (
+      <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
+        <Background />
+        <div className="flex flex-col items-center justify-center max-w-7xl mx-auto min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading settings...</p>
+        </div>
+      </main>
+    );
+  }
+
   const onSubmit = (values: UserConfigSchemaType) => {
     toast.loading("Updating settings...", {
       id: "update-settings",
@@ -139,8 +151,8 @@ export default function SettingsPage() {
                   currentUser?.status === "APPROVED"
                     ? "default"
                     : currentUser?.status === "PENDING"
-                      ? "secondary"
-                      : "destructive"
+                    ? "secondary"
+                    : "destructive"
                 }
                 className="text-base px-3 py-1"
               >
@@ -158,7 +170,7 @@ export default function SettingsPage() {
               </Badge>
             </div>
           </div>
-          
+
           <div>
             {!isTeacher && (
               <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg mb-6">
@@ -180,7 +192,8 @@ export default function SettingsPage() {
                   <h4 className="font-semibold">Instant Updates</h4>
                 </div>
                 <p className="text-green-700 mt-1">
-                  As a teacher, your settings changes will be applied immediately.
+                  As a teacher, your settings changes will be applied
+                  immediately.
                 </p>
               </div>
             )}
@@ -210,7 +223,9 @@ export default function SettingsPage() {
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue
-                            placeholder={isTeacher ? "Teacher" : "Select a class"}
+                            placeholder={
+                              isTeacher ? "Teacher" : "Select a class"
+                            }
                           />
                         </SelectTrigger>
                         <SelectContent>
@@ -306,7 +321,7 @@ export default function SettingsPage() {
                   </FormItem>
                 )}
               />
-              
+
               <div className="pt-4">
                 <Button
                   type="submit"

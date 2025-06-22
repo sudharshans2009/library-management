@@ -5,7 +5,9 @@ import {
   Home,
   LayoutDashboard,
   Lock,
+  Shield,
   UserCircle,
+  Users,
   Wrench,
 } from "lucide-react";
 
@@ -29,6 +31,29 @@ export const siteLinks = [
     label: "About",
     href: "/about",
     icon: UserCircle,
+  },
+];
+
+export const adminLinks = [
+  {
+    label: "Admin",
+    href: "/admin",
+    icon: Shield,
+  },
+  {
+    label: "Users",
+    href: "/admin/users",
+    icon: Users,
+  },
+  {
+    label: "Records",
+    href: "/admin/records",
+    icon: FileText,
+  },
+  {
+    label: "Books",
+    href: "/admin/books",
+    icon: BookOpen,
   },
 ];
 

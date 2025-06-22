@@ -1,4 +1,3 @@
-// filepath: c:\Users\bsoun\Documents\Codebase\library-management-v2\actions\upload.ts
 "use server";
 
 import { saveProfileImage, saveBookCover, saveBookVideo, saveImageLocally } from "@/lib/blob";

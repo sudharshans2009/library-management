@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/database/drizzle";
 import { user, config, books, borrowRecords } from "@/database/schema";
 import { eq, and, inArray, or } from "drizzle-orm";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 
 export async function POST(

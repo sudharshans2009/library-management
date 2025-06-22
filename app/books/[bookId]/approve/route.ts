@@ -1,10 +1,9 @@
-// filepath: c:\Users\bsoun\Documents\Codebase\library-management-v2\app\books\[bookId]\approve\route.ts
 import { NextRequest } from "next/server";
 import { redirect } from "next/navigation";
 import { db } from "@/database/drizzle";
 import { user, config, books, borrowRecords } from "@/database/schema";
 import { eq, and } from "drizzle-orm";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 
 export async function POST(

@@ -2,7 +2,7 @@
 
 import { UserConfigSchema, UserConfigSchemaType } from "@/schemas/config";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 import { db } from "@/database/drizzle";
 import { config } from "@/database/schema";
