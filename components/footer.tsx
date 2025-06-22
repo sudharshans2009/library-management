@@ -1,102 +1,168 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, MapPin } from "lucide-react";
-import { Background } from "@/components/background";
-import { infoLinks, siteLinks, socialLinks } from "@/constants";
+import {
+  Book,
+  Mail,
+  MapPin,
+  Phone,
+  Facebook,
+  Twitter,
+  Instagram,
+  Github,
+  FileText,
+  MessageSquare,
+  Icon,
+} from "lucide-react";
+import { auth } from "@/lib/auth/main";
+import { headers } from "next/headers";
+
+const socialLinks = [
+  { name: "Facebook", icon: Facebook, href: "#" },
+  { name: "Twitter", icon: Twitter, href: "#" },
+  { name: "Instagram", icon: Instagram, href: "#" },
+  { name: "GitHub", icon: Github, href: "https://github.com" },
+];
+
+const quickLinks = [
+  { name: "Books", href: "/books", icon: Book },
+  { name: "Dashboard", href: "/dashboard", icon: FileText },
+  { name: "Requests", href: "/requests", icon: MessageSquare },
+];
+
+const supportLinks = [
+  { name: "Contact Us", href: "/contact", icon: Mail },
+  { name: "Library Rules", href: "/rules", icon: FileText },
+  { name: "FAQ", href: "/faq", icon: MessageSquare },
+];
 
 export default async function Footer() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
-    <main className="relative w-full h-full px-5 py-4 z-10">
-      <div className="flex flex-col items-center max-w-7xl mx-auto">
-        <footer
-          id="footer"
-          className="relative w-full h-full flex flex-col items-center justify-center"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 py-16">
-            <div className="space-y-6">
-              <Link href="/" className="inline-block">
-                <span className="text-2xl font-bold text-primary">
-                  SS.library
+    <footer className="bg-muted/50 border-t border-border/40 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Brand Section */}
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-foreground font-bold text-sm">
+                  SS
                 </span>
-              </Link>
-              <p className="text-gray-300 max-w-sm">
-                Creating digital experiences that combine creativity with
-                technical excellence.
-              </p>
-              <div className="flex gap-4">
-                {socialLinks.map((social) => (
+              </div>
+              <span className="font-bold text-xl">Library</span>
+            </Link>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Your comprehensive library management system. Discover, borrow, and
+              manage books with ease.
+            </p>
+            <div className="flex space-x-4">
+              {socialLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                  aria-label={link.name}
+                >
+                  <link.icon className="w-5 h-5" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-6">
+              Quick Links
+            </h3>
+            <ul className="space-y-4">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
                   <Link
-                    key={social.name}
-                    href={social.url}
-                    aria-label={social.name}
-                    className="p-2 rounded-lg bg-primary/10 text-primary transition-colors"
+                    href={session?.user ? link.href : "/sign-in"}
+                    className="flex gap-2 items-center text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {social.icon}
+                    <link.icon className="w-4 h-4 text-primary" />
+                    {link.name}
                   </Link>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-300 mb-6">
-                Quick Links
-              </h3>
-              <ul className="space-y-4">
-                {siteLinks.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="flex gap-2 items-center text-gray-400 hover:text-primary transition-colors"
-                    >
-                      <link.icon className="w-5 h-5 text-primary" />{" "}
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-300 mb-6">
-                Information
-              </h3>
-              <ul className="space-y-4">
-                {infoLinks.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="flex gap-2 items-center text-gray-400 hover:text-primary transition-colors"
-                    >
-                      <link.icon className="w-5 h-5 text-primary" />{" "}
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-300 mb-6">
-                Get in Touch
-              </h3>
-              <div className="space-y-4">
-                <p className="flex items-center gap-3 text-gray-400">
-                  <Mail className="w-5 h-5 text-primary" />
-                  contact@sudharshans.me
-                </p>
-                <p className="flex items-center gap-3 text-gray-400">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  TN, India
-                </p>
-              </div>
-            </div>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="border-t w-full border-gray-800 py-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p className="text-gray-300 text-sm">
-                © {new Date().getFullYear()} Sudharshan S. All rights reserved.
+
+          {/* Support Links */}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-6">
+              Support
+            </h3>
+            <ul className="space-y-4">
+              {supportLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={session?.user ? link.href : "/sign-in"}
+                    className="flex gap-2 items-center text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <link.icon className="w-4 h-4 text-primary" />
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Information */}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-6">
+              Get in Touch
+            </h3>
+            <div className="space-y-4">
+              <p className="flex items-center gap-3 text-muted-foreground">
+                <Mail className="w-5 h-5 text-primary" />
+                contact@sslibrary.com
+              </p>
+              <p className="flex items-center gap-3 text-muted-foreground">
+                <Phone className="w-5 h-5 text-primary" />
+                +1 (555) 123-4567
+              </p>
+              <p className="flex items-center gap-3 text-muted-foreground">
+                <MapPin className="w-5 h-5 text-primary" />
+                123 Library St.
               </p>
             </div>
           </div>
-        </footer>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-t border-border/40 pt-8 mt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} SS.Library. All rights reserved.
+            </p>
+            <div className="flex space-x-6 text-sm">
+              <Link
+                href="/privacy"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="/cookies"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Cookie Policy
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>
+    </footer>
   );
 }

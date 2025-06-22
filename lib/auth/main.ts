@@ -1,30 +1,63 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from "@/database/drizzle";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/database/schema";
 import config from "../config";
-import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/services/email";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "@/lib/services/email";
 
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true, // Enable email verification
-    async sendResetPassword(data, request) {
+    async sendResetPassword(data, _request) {
       try {
         const result = await sendPasswordResetEmail(
           data.user.email,
           data.user.name || data.user.email,
-          data.url
+          data.url,
         );
-        
+
         if (!result.success) {
           console.error("Failed to send password reset email:", result.error);
           throw new Error("Failed to send password reset email");
         }
-        
-        console.log("Password reset email sent successfully to:", data.user.email);
+
+        console.log(
+          "Password reset email sent successfully to:",
+          data.user.email,
+        );
       } catch (error) {
         console.error("Error sending password reset email:", error);
+        throw error;
+      }
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true, // Send verification email on sign up
+    autoSignInAfterVerification: true, // Auto sign in after verification
+    async sendVerificationEmail(data, _request) {
+      try {
+        const result = await sendVerificationEmail(
+          data.user.email,
+          data.user.name || data.user.email,
+          data.url,
+        );
+
+        if (!result.success) {
+          console.error("Failed to send verification email:", result.error);
+          throw new Error("Failed to send verification email");
+        }
+
+        console.log(
+          "Verification email sent successfully to:",
+          data.user.email,
+        );
+      } catch (error) {
+        console.error("Error sending verification email:", error);
         throw error;
       }
     },
@@ -55,28 +88,5 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
-  },
-  emailVerification: {
-    sendOnSignUp: true, // Send verification email on sign up
-    autoSignInAfterVerification: true, // Auto sign in after verification
-    async sendVerificationEmail(data, request) {
-      try {
-        const result = await sendVerificationEmail(
-          data.user.email,
-          data.user.name || data.user.email,
-          data.url
-        );
-        
-        if (!result.success) {
-          console.error("Failed to send verification email:", result.error);
-          throw new Error("Failed to send verification email");
-        }
-        
-        console.log("Verification email sent successfully to:", data.user.email);
-      } catch (error) {
-        console.error("Error sending verification email:", error);
-        throw error;
-      }
-    },
   },
 });

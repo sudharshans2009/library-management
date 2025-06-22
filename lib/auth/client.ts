@@ -5,14 +5,14 @@ export const authClient = createAuthClient({
   baseURL: config.env.url,
 });
 
-export const { 
-  signIn, 
-  signOut, 
-  signUp, 
+export const {
+  signIn,
+  signOut,
+  signUp,
   useSession,
   changePassword,
   forgetPassword,
   resetPassword,
   sendVerificationEmail,
-  verifyEmail
+  verifyEmail,
 } = authClient;

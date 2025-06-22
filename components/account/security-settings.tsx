@@ -3,35 +3,51 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PasswordUpdateSchema, PasswordUpdateSchemaType } from "@/schemas/account";
-import { 
-  updatePassword, 
-  getUserAccounts, 
-  unlinkAccount, 
+import {
+  PasswordUpdateSchema,
+  PasswordUpdateSchemaType,
+} from "@/schemas/account";
+import {
+  updatePassword,
+  getUserAccounts,
+  unlinkAccount,
   requestPasswordReset,
-  resendVerificationEmail 
+  resendVerificationEmail,
 } from "@/actions/account";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { 
-  Lock, 
-  Shield, 
-  Key, 
-  Mail, 
-  Github, 
-  Chrome, 
+import {
+  Lock,
+  Shield,
+  Key,
+  Mail,
+  Github,
+  Chrome,
   Unlink,
   Plus,
   Loader2,
   AlertTriangle,
   CheckCircle,
-  Send
+  Send,
 } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { signIn } from "@/lib/auth/client";
@@ -162,8 +178,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
   };
 
   const linkedAccounts = accountsData?.accounts || [];
-  const hasGoogleAccount = linkedAccounts.some(acc => acc.providerId === "google");
-  const hasGithubAccount = linkedAccounts.some(acc => acc.providerId === "github");
+  const hasGoogleAccount = linkedAccounts.some(
+    (acc) => acc.providerId === "google",
+  );
+  const hasGithubAccount = linkedAccounts.some(
+    (acc) => acc.providerId === "github",
+  );
 
   return (
     <div className="space-y-6">
@@ -195,8 +215,8 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 </Badge>
               </div>
               {!user.emailVerified && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={handleResendVerification}
                   disabled={resendVerificationMutation.isPending}
@@ -215,8 +235,9 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Your email address is not verified. Some features may be limited until you verify your email.
-                  Please check your inbox for the verification email.
+                  Your email address is not verified. Some features may be
+                  limited until you verify your email. Please check your inbox
+                  for the verification email.
                 </AlertDescription>
               </Alert>
             )}
@@ -225,7 +246,8 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Your email address has been verified. You have full access to all features.
+                  Your email address has been verified. You have full access to
+                  all features.
                 </AlertDescription>
               </Alert>
             )}
@@ -247,7 +269,10 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
         <CardContent className="space-y-6">
           {!showPasswordReset ? (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="currentPassword"
@@ -255,10 +280,10 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                     <FormItem>
                       <FormLabel>Current Password</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="password"
-                          placeholder="Enter your current password" 
-                          {...field} 
+                          placeholder="Enter your current password"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -273,10 +298,10 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="password"
-                          placeholder="Enter your new password" 
-                          {...field} 
+                          placeholder="Enter your new password"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -291,10 +316,10 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                     <FormItem>
                       <FormLabel>Confirm New Password</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="password"
-                          placeholder="Confirm your new password" 
-                          {...field} 
+                          placeholder="Confirm your new password"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -303,8 +328,8 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 />
 
                 <div className="flex gap-2">
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={updatePasswordMutation.isPending}
                   >
                     {updatePasswordMutation.isPending ? (
@@ -314,9 +339,9 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                     )}
                     Update Password
                   </Button>
-                  
-                  <Button 
-                    type="button" 
+
+                  <Button
+                    type="button"
                     variant="outline"
                     onClick={() => setShowPasswordReset(true)}
                   >
@@ -330,12 +355,13 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  A password reset link will be sent to your email address: {user.email}
+                  A password reset link will be sent to your email address:{" "}
+                  {user.email}
                 </AlertDescription>
               </Alert>
-              
+
               <div className="flex gap-2">
-                <Button 
+                <Button
                   onClick={() => passwordResetMutation.mutate()}
                   disabled={passwordResetMutation.isPending}
                 >
@@ -346,8 +372,8 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                   )}
                   Send Reset Email
                 </Button>
-                
-                <Button 
+
+                <Button
                   variant="outline"
                   onClick={() => setShowPasswordReset(false)}
                 >
@@ -375,10 +401,15 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
             <div className="space-y-3">
               <h4 className="font-medium">Linked Accounts</h4>
               {linkedAccounts.map((account) => (
-                <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={account.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     {getProviderIcon(account.providerId)}
-                    <span className="font-medium">{getProviderName(account.providerId)}</span>
+                    <span className="font-medium">
+                      {getProviderName(account.providerId)}
+                    </span>
                     <Badge variant="outline">Connected</Badge>
                   </div>
                   <Button
@@ -411,7 +442,7 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                   Connect Google
                 </Button>
               )}
-              
+
               {!hasGithubAccount && (
                 <Button
                   variant="outline"

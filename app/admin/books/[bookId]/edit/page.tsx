@@ -10,9 +10,9 @@ interface EditBookPageProps {
 
 export default async function EditBookPage({ params }: EditBookPageProps) {
   const { bookId } = await params;
-  
+
   const result = await getBookById(bookId);
-  
+
   if (!result.success || !result.data) {
     notFound();
   }
@@ -28,7 +28,7 @@ export default async function EditBookPage({ params }: EditBookPageProps) {
             Update book information and settings
           </p>
         </div>
-        
+
         <BookForm initialData={book} mode="edit" />
       </div>
     </main>

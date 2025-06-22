@@ -14,14 +14,17 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  description: "A blank template using Payload in a Next.js app.",
-  title: "Payload Blank Template",
+  description:
+    "Advanced Library Management System with user authentication and book borrowing.",
+  title: "SS.Library - Library Management System",
 };
 
 export default async function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html
@@ -34,6 +37,7 @@ export default async function RootLayout({
           <ThemeProvider>
             <Navbar />
             {children}
+            {modal}
             <Footer />
             <Toaster position="bottom-right" richColors />
           </ThemeProvider>

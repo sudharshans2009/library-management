@@ -7,7 +7,7 @@ interface AdminRecordsPageProps {
 }
 
 export default async function AdminRecordsPage({
-  searchParams
+  searchParams,
 }: AdminRecordsPageProps) {
   return (
     <main className="relative w-full h-full px-5 z-10">

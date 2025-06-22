@@ -47,13 +47,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  getUsers, 
-  approveUser, 
-  rejectUser, 
-  suspendUser, 
+import {
+  getUsers,
+  approveUser,
+  rejectUser,
+  suspendUser,
   changeUserRole,
-  exportUsersToCSV 
+  exportUsersToCSV,
 } from "@/actions/admins";
 import { UserWithConfig, UserSearchOptions } from "@/lib/services/user";
 
@@ -158,7 +158,7 @@ const columns: ColumnDef<UserWithConfig>[] = [
       const roleVariant = config.role === "ADMIN" ? "default" : "secondary";
       const roleIcon = config.role === "ADMIN" ? ShieldIcon : UserIcon;
       const RoleIcon = roleIcon;
-      
+
       return (
         <Badge variant={roleVariant} className="gap-1">
           <RoleIcon className="w-3 h-3" />
@@ -182,20 +182,29 @@ const columns: ColumnDef<UserWithConfig>[] = [
       const getStatusStyles = (status: string) => {
         switch (status) {
           case "PENDING":
-            return { variant: "outline" as const, className: "border-yellow-500 text-yellow-700" };
+            return {
+              variant: "outline" as const,
+              className: "border-yellow-500 text-yellow-700",
+            };
           case "APPROVED":
-            return { variant: "default" as const, className: "bg-green-500 hover:bg-green-600" };
+            return {
+              variant: "default" as const,
+              className: "bg-green-500 hover:bg-green-600",
+            };
           case "REJECTED":
             return { variant: "destructive" as const };
           case "SUSPENDED":
-            return { variant: "destructive" as const, className: "bg-red-600 hover:bg-red-700" };
+            return {
+              variant: "destructive" as const,
+              className: "bg-red-600 hover:bg-red-700",
+            };
           default:
             return { variant: "outline" as const };
         }
       };
-      
+
       const styles = getStatusStyles(config.status || "PENDING");
-      
+
       return (
         <Badge variant={styles.variant} className={styles.className}>
           {config.status}
@@ -208,21 +217,21 @@ const columns: ColumnDef<UserWithConfig>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const { user, config } = row.original;
-      
+
       return <UserActionsDropdown user={user} config={config} />;
     },
   },
 ];
 
-function UserActionsDropdown({ 
-  user, 
-  config 
-}: { 
-  user: UserWithConfig['user']; 
-  config: UserWithConfig['config'];
+function UserActionsDropdown({
+  user,
+  config,
+}: {
+  user: UserWithConfig["user"];
+  config: UserWithConfig["config"];
 }) {
   const queryClient = useQueryClient();
-  
+
   const approveMutation = useMutation({
     mutationFn: () => approveUser(user.id),
     onSuccess: (result) => {
@@ -234,7 +243,7 @@ function UserActionsDropdown({
       }
     },
   });
-  
+
   const rejectMutation = useMutation({
     mutationFn: () => rejectUser(user.id),
     onSuccess: (result) => {
@@ -246,7 +255,7 @@ function UserActionsDropdown({
       }
     },
   });
-  
+
   const suspendMutation = useMutation({
     mutationFn: () => suspendUser(user.id),
     onSuccess: (result) => {
@@ -258,9 +267,10 @@ function UserActionsDropdown({
       }
     },
   });
-  
+
   const roleChangeMutation = useMutation({
-    mutationFn: (role: "USER" | "ADMIN" | "MODERATOR") => changeUserRole(user.id, role),
+    mutationFn: (role: "USER" | "ADMIN" | "MODERATOR") =>
+      changeUserRole(user.id, role),
     onSuccess: (result) => {
       if (result.success) {
         toast.success(result.message);
@@ -282,7 +292,7 @@ function UserActionsDropdown({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         {config.status === "PENDING" && (
           <>
             <DropdownMenuItem
@@ -303,7 +313,7 @@ function UserActionsDropdown({
             </DropdownMenuItem>
           </>
         )}
-        
+
         {config.status === "APPROVED" && (
           <DropdownMenuItem
             onClick={() => suspendMutation.mutate()}
@@ -314,7 +324,7 @@ function UserActionsDropdown({
             Suspend
           </DropdownMenuItem>
         )}
-        
+
         {config.status === "SUSPENDED" && (
           <DropdownMenuItem
             onClick={() => approveMutation.mutate()}
@@ -325,10 +335,10 @@ function UserActionsDropdown({
             Reactivate
           </DropdownMenuItem>
         )}
-        
+
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Change Role</DropdownMenuLabel>
-        
+
         {config.role !== "USER" && (
           <DropdownMenuItem
             onClick={() => roleChangeMutation.mutate("USER")}
@@ -338,7 +348,7 @@ function UserActionsDropdown({
             Make User
           </DropdownMenuItem>
         )}
-        
+
         {config.role !== "ADMIN" && (
           <DropdownMenuItem
             onClick={() => roleChangeMutation.mutate("ADMIN")}
@@ -436,27 +446,43 @@ export default function UsersTable() {
   const handleExportCSV = (data: any[]) => {
     const csvContent = [
       // CSV Headers
-      ["Name", "Email", "Full Name", "Class", "Section", "Roll No", "Role", "Status", "Created At", "Last Active"].join(","),
+      [
+        "Name",
+        "Email",
+        "Full Name",
+        "Class",
+        "Section",
+        "Roll No",
+        "Role",
+        "Status",
+        "Created At",
+        "Last Active",
+      ].join(","),
       // CSV Data
-      ...data.map(row => [
-        `"${row.name}"`,
-        `"${row.email}"`,
-        `"${row.fullName}"`,
-        `"${row.class}"`,
-        `"${row.section}"`,
-        `"${row.rollNo}"`,
-        `"${row.role}"`,
-        `"${row.status}"`,
-        `"${row.createdAt}"`,
-        `"${row.lastActiveAt || 'N/A'}"`
-      ].join(","))
+      ...data.map((row) =>
+        [
+          `"${row.name}"`,
+          `"${row.email}"`,
+          `"${row.fullName}"`,
+          `"${row.class}"`,
+          `"${row.section}"`,
+          `"${row.rollNo}"`,
+          `"${row.role}"`,
+          `"${row.status}"`,
+          `"${row.createdAt}"`,
+          `"${row.lastActiveAt || "N/A"}"`,
+        ].join(",")
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute(
+      "download",
+      `users_export_${new Date().toISOString().split("T")[0]}.csv`
+    );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -465,9 +491,17 @@ export default function UsersTable() {
 
   if (query.isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading users...</span>
+      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto px-5">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
+            <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+          </div>
+          <p className="text-lg font-medium">Loading your users...</p>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we fetch your information
+          </p>
+        </div>
       </div>
     );
   }
@@ -493,7 +527,7 @@ export default function UsersTable() {
             className="pl-8"
           />
         </div>
-        
+
         <div className="flex gap-2 flex-wrap">
           {table.getColumn("role") && (
             <DataTableFacetedFilter
@@ -609,7 +643,7 @@ export default function UsersTable() {
         <div className="flex-1 text-sm text-muted-foreground">
           {query.data?.data && (
             <>
-              Showing {(pagination.pageIndex * pagination.pageSize) + 1} to{" "}
+              Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
               {Math.min(
                 (pagination.pageIndex + 1) * pagination.pageSize,
                 query.data.data.totalCount

@@ -10,7 +10,7 @@ export default function NewBookPage() {
             Add a new book to the library system
           </p>
         </div>
-        
+
         <BookForm mode="create" />
       </div>
     </main>

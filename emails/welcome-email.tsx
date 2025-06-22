@@ -16,10 +16,7 @@ interface WelcomeEmailProps {
   libraryUrl: string;
 }
 
-export const WelcomeEmail = ({
-  userName,
-  libraryUrl,
-}: WelcomeEmailProps) => (
+export const WelcomeEmail = ({ userName, libraryUrl }: WelcomeEmailProps) => (
   <Html>
     <Head />
     <Preview>Welcome to SS.library!</Preview>
@@ -29,9 +26,7 @@ export const WelcomeEmail = ({
           <Heading style={h1}>📚 SS.library</Heading>
         </Section>
         <Heading style={h2}>Welcome to SS.library!</Heading>
-        <Text style={text}>
-          Hi {userName},
-        </Text>
+        <Text style={text}>Hi {userName},</Text>
         <Text style={text}>
           Welcome to SS.library! Your email has been verified and your account
           is now active. You can start browsing and borrowing books from our
@@ -52,7 +47,8 @@ export const WelcomeEmail = ({
           </Button>
         </Section>
         <Text style={footer}>
-          Happy reading!<br />
+          Happy reading!
+          <br />
           The SS.library Team
         </Text>
       </Container>

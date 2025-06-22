@@ -1,35 +1,28 @@
-import { Background } from "@/components/background";
-import RecordCard from "@/components/record-card";
-import { Badge } from "@/components/ui/badge";
+import { Suspense } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+  BookIcon,
+  ClockIcon,
+  TrendingUpIcon,
+  AlertCircleIcon,
+  CheckCircleIcon,
+  EyeIcon,
+  CalendarIcon,
+  MessageSquareIcon,
+  PlusIcon,
+} from "lucide-react";
+import Link from "next/link";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
-import { AlertTriangle, Settings, Shield } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { db } from "@/database/drizzle";
-import { config, borrowRecords, books } from "@/database/schema";
-import { eq, desc } from "drizzle-orm";
+import { getUserBorrowRecords } from "@/actions/records";
+import { getRequests } from "@/actions/requests";
+import { Background } from "@/components/background";
+import BooksList from "@/components/book-list";
 
-type BadgeType =
-  | "default"
-  | "destructive"
-  | "outline"
-  | "secondary"
-  | null
-  | undefined;
-
-export default async function DashboardPage() {
-  // Get current session using Better Auth
+async function DashboardContent() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -38,216 +31,409 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
-  const currentUser = session.user;
+  // Get user's borrow records
+  const recordsResult = await getUserBorrowRecords(session.user.id, {
+    limit: 5,
+    sortOrder: "desc",
+  });
 
-  // Get user configuration using Drizzle
-  const [userConfig] = await db
-    .select()
-    .from(config)
-    .where(eq(config.userId, currentUser.id))
-    .limit(1);
+  // Get user's requests
+  const requestsResult = await getRequests({
+    userId: session.user.id,
+    limit: 5,
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  });
 
-  if (!userConfig) {
-    redirect("/setup");
-  }
+  const records = recordsResult.success
+    ? recordsResult.data?.records || []
+    : [];
+  const requests = requestsResult.success
+    ? requestsResult.data?.requests || []
+    : [];
 
-  // Get user's borrow records with book details using Drizzle
-  const userBorrowRecords = await db
-    .select({
-      record: borrowRecords,
-      book: books,
-    })
-    .from(borrowRecords)
-    .innerJoin(books, eq(borrowRecords.bookId, books.id))
-    .where(eq(borrowRecords.userId, currentUser.id))
-    .orderBy(desc(borrowRecords.createdAt));
+  // Calculate stats
+  const activeRecords = records.filter((r) => r.status === "BORROWED");
+  const pendingRecords = records.filter((r) => r.status === "PENDING");
+  const overdueRecords = activeRecords.filter((r) => {
+    const dueDate = new Date(r.dueDate);
+    return dueDate < new Date();
+  });
 
-  const status = (status: typeof userConfig.status) => {
-    if (status === "APPROVED") {
-      return {
-        text: "Active",
-        theme: "default",
-      };
-    } else if (status === "SUSPENDED") {
-      return {
-        text: "Suspended",
-        theme: "destructive",
-      };
-    } else if (status === "PENDING") {
-      return {
-        text: "Pending",
-        theme: "secondary",
-      };
-    } else if (status === "REJECTED") {
-      return {
-        text: "Rejected",
-        theme: "destructive",
-      };
-    } else {
-      return {
-        text: "Unknown",
-        theme: "outline",
-      };
-    }
-  };
+  const pendingRequests = requests.filter((r) => r.status === "PENDING");
+  const recentRequests = requests.slice(0, 3);
 
   return (
-    <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
-      <Background />
-      <div className="flex flex-col items-center max-w-7xl mx-auto">
-        <section
-          id="setup"
-          className="relative w-full h-full pt-24 flex gap-8 flex-col lg:flex-row items-start justify-center"
-        >
-          <div className="w-full lg:sticky top-28 flex-1 flex flex-col items-center gap-5">
-            {userConfig.status === "SUSPENDED" && (
-              <div className="mb-6 p-4 border border-red-200 bg-red-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="w-6 h-6 text-red-600" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-red-800">
-                      Account Suspended
-                    </h3>
-                    <p className="text-red-700 mt-1">
-                      Your account has been suspended. You cannot request new
-                      books or update your profile during this time. Please
-                      contact an administrator for assistance.
-                    </p>
-                  </div>
-                </div>
+    <>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Active Borrows
+            </CardTitle>
+            <BookIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{activeRecords.length}</div>
+            <p className="text-xs text-muted-foreground">
+              {overdueRecords.length} overdue
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Pending Requests
+            </CardTitle>
+            <ClockIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingRecords.length}</div>
+            <p className="text-xs text-muted-foreground">Awaiting approval</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">My Requests</CardTitle>
+            <MessageSquareIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingRequests.length}</div>
+            <p className="text-xs text-muted-foreground">
+              {requests.length} total requests
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Borrowed
+            </CardTitle>
+            <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{records.length}</div>
+            <p className="text-xs text-muted-foreground">All time borrows</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Activity */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Recent Borrow Records */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  <BookIcon className="w-5 h-5 mr-2" />
+                  Recent Borrows
+                </CardTitle>
+                <Link href="/dashboard/borrows">
+                  <Button variant="outline" size="sm">
+                    <EyeIcon className="w-4 h-4 mr-2" />
+                    View All
+                  </Button>
+                </Link>
               </div>
-            )}
-            {userConfig.status === "PENDING" && (
-              <div className="mb-6 p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="w-6 h-6 text-yellow-600" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-yellow-800">
-                      Account Pending Approval
-                    </h3>
-                    <p className="text-yellow-700 mt-1">
-                      Your account is pending approval. You cannot request books
-                      until an administrator approves your account.
-                    </p>
-                  </div>
+            </CardHeader>
+            <CardContent>
+              {records.length > 0 ? (
+                <div className="space-y-4">
+                  {records.slice(0, 5).map((record) => (
+                    <div
+                      key={record.id}
+                      className="flex items-center space-x-4 p-3 rounded-lg border"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {record.book.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          by {record.book.author}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Due: {new Date(record.dueDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          record.status === "BORROWED"
+                            ? "default"
+                            : record.status === "PENDING"
+                              ? "outline"
+                              : "secondary"
+                        }
+                      >
+                        {record.status}
+                      </Badge>
+                      <Link href={`/records/${record.id}`}>
+                        <Button variant="ghost" size="sm">
+                          <EyeIcon className="w-4 h-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <BookIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No borrow records yet</p>
+                  <Link href="/books">
+                    <Button className="mt-2">
+                      <BookIcon className="w-4 h-4 mr-2" />
+                      Browse Books
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Requests */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  <MessageSquareIcon className="w-5 h-5 mr-2" />
+                  Recent Requests
+                </CardTitle>
+                <Link href="/requests">
+                  <Button variant="outline" size="sm">
+                    <EyeIcon className="w-4 h-4 mr-2" />
+                    View All
+                  </Button>
+                </Link>
               </div>
-            )}
-            <Card className="relative w-full">
-              <Link href="/dashboard/account" className="absolute top-2 right-2">
-                <Button size="icon">
-                  <p className="sr-only">Account</p>
-                  <Shield className="w-4 h-4" />
+            </CardHeader>
+            <CardContent>
+              {recentRequests.length > 0 ? (
+                <div className="space-y-4">
+                  {recentRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="flex items-center space-x-4 p-3 rounded-lg border"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {request.type
+                            .replace("_", " ")
+                            .toLowerCase()
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {request.book.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(request.createdAt!).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          request.status === "PENDING"
+                            ? "outline"
+                            : request.status === "APPROVED"
+                              ? "default"
+                              : request.status === "REJECTED"
+                                ? "destructive"
+                                : "secondary"
+                        }
+                      >
+                        {request.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <MessageSquareIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No requests yet</p>
+                  <Link href="/requests">
+                    <Button className="mt-2">
+                      <PlusIcon className="w-4 h-4 mr-2" />
+                      Create Request
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <TrendingUpIcon className="w-5 h-5 mr-2" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link href="/books" className="block">
+                <Button className="w-full justify-start">
+                  <BookIcon className="w-4 h-4 mr-2" />
+                  Browse Books
                 </Button>
               </Link>
-              <CardHeader className="text-center">
-                <CardTitle>{userConfig.fullName}</CardTitle>
-                <CardDescription>
-                  <Badge variant="secondary">
-                    {userConfig.role === "USER"
-                      ? "Student"
-                      : userConfig.role === "ADMIN"
-                      ? "Administrator"
-                      : userConfig.role === "MODERATOR"
-                      ? "Moderator"
-                      : "Guest"}
-                  </Badge>
-                </CardDescription>
+              <Link href="/requests" className="block">
+                <Button variant="outline" className="w-full justify-start">
+                  <MessageSquareIcon className="w-4 h-4 mr-2" />
+                  Manage Requests
+                </Button>
+              </Link>
+              <Link href="/dashboard/account" className="block">
+                <Button variant="outline" className="w-full justify-start">
+                  <EyeIcon className="w-4 h-4 mr-2" />
+                  Account Settings
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Alerts */}
+          {overdueRecords.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center text-destructive">
+                  <AlertCircleIcon className="w-5 h-5 mr-2" />
+                  Overdue Books
+                </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col items-center justify-center gap-8">
-                <Image
-                  className="rounded-full"
-                  src={currentUser.image || "/images/default-avatar.png"}
-                  width={128}
-                  height={128}
-                  alt={currentUser.name || "User avatar"}
-                />
-                <div className="w-full space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Status
-                    </span>
-                    <Badge
-                      variant={status(userConfig.status).theme as BadgeType}
+              <CardContent>
+                <div className="space-y-3">
+                  {overdueRecords.slice(0, 3).map((record) => (
+                    <div
+                      key={record.id}
+                      className="p-3 border border-destructive/20 bg-destructive/5 rounded-lg"
                     >
-                      {status(userConfig.status).text}
-                    </Badge>
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="text-base font-medium text-muted-foreground">
-                      Class
-                    </span>
-                    <Badge variant="outline">{userConfig.class}</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-base font-medium text-muted-foreground">
-                      Section
-                    </span>
-                    <Badge variant="outline">{userConfig.section}</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-base font-medium text-muted-foreground">
-                      Roll No
-                    </span>
-                    <Badge variant="outline">
-                      {userConfig.rollNo || "N/A"}
-                    </Badge>
-                  </div>
+                      <p className="text-sm font-medium">{record.book.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Due: {new Date(record.dueDate).toLocaleDateString()}
+                      </p>
+                      <Link href={`/records/${record.id}`}>
+                        <Button variant="outline" size="sm" className="mt-2">
+                          View Details
+                        </Button>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
-            <div className="w-full flex gap-4">
-              {userConfig.role === "USER" &&
-                userConfig.status === "APPROVED" && (
-                  <Link href="/books" className="w-full">
-                    <Button size="xl" className="w-full">
-                      Request a Book
-                    </Button>
-                  </Link>
-                )}
-              {(userConfig.role === "ADMIN" ||
-                userConfig.role === "MODERATOR") && (
-                <Link href="/manage" className="w-full">
-                  <Button size="xl" className="w-full">
-                    Manage Library
-                  </Button>
-                </Link>
-              )}
-              <Link href="/dashboard/settings" className="w-full">
-                <Button size="xl" variant="secondary" className="w-full">
-                  Update Profile
-                </Button>
-              </Link>
-            </div>
-          </div>
-          <div className="w-full flex-2 grid gap-10 lg:grid-cols-2">
-            {userBorrowRecords.length > 0 ? (
-              userBorrowRecords.map(({ record, book }) => (
-                <RecordCard
-                  key={record.id}
-                  record={{
-                    ...record,
-                    book: book,
-                  }}
-                />
-              ))
-            ) : (
-              <div className="col-span-2 text-center py-8">
-                <p className="text-muted-foreground">
-                  No borrow records found.
+          )}
+
+          {/* Upcoming Due Dates */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <CalendarIcon className="w-5 h-5 mr-2" />
+                Upcoming Due Dates
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {activeRecords.length > 0 ? (
+                <div className="space-y-3">
+                  {activeRecords
+                    .filter((record) => {
+                      const dueDate = new Date(record.dueDate);
+                      const today = new Date();
+                      const daysUntilDue = Math.floor(
+                        (dueDate.getTime() - today.getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      );
+                      return daysUntilDue >= 0 && daysUntilDue <= 7;
+                    })
+                    .slice(0, 3)
+                    .map((record) => {
+                      const dueDate = new Date(record.dueDate);
+                      const today = new Date();
+                      const daysUntilDue = Math.floor(
+                        (dueDate.getTime() - today.getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      );
+
+                      return (
+                        <div
+                          key={record.id}
+                          className="flex items-center justify-between p-3 border rounded-lg"
+                        >
+                          <div>
+                            <p className="text-sm font-medium truncate">
+                              {record.book.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {daysUntilDue === 0
+                                ? "Due today"
+                                : `${daysUntilDue} days left`}
+                            </p>
+                          </div>
+                          <Badge
+                            variant={
+                              daysUntilDue <= 3 ? "destructive" : "outline"
+                            }
+                          >
+                            {daysUntilDue <= 3 ? "Soon" : "OK"}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No upcoming due dates
                 </p>
-                {userConfig.status === "APPROVED" &&
-                  userConfig.role === "USER" && (
-                    <Link href="/books" className="mt-4 inline-block">
-                      <Button>Browse Books</Button>
-                    </Link>
-                  )}
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
+      <Background />
+      <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">
+            Welcome back! Here&apos;s an overview of your library activity.
+          </p>
+        </div>
+
+        <Suspense
+          fallback={
+            <div className="flex flex-col items-center justify-center max-w-7xl mx-auto px-5">
+              <div className="text-center space-y-4">
+                <div className="relative">
+                  <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
+                  <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+                </div>
+                <p className="text-lg font-medium">Loading your dashboard...</p>
+                <p className="text-sm text-muted-foreground">
+                  Please wait while we fetch your information
+                </p>
               </div>
-            )}
-          </div>
-        </section>
+            </div>
+          }
+        >
+          <DashboardContent />
+        </Suspense>
       </div>
     </main>
   );
 }
+
+export const metadata = {
+  title: "Dashboard | SS.Library",
+  description: "Your personal library dashboard",
+};

@@ -17,15 +17,27 @@ interface BorrowRecordsTableProps {
   compact?: boolean;
 }
 
-export default function BorrowRecordsTable({ records, compact = false }: BorrowRecordsTableProps) {
+export default function BorrowRecordsTable({
+  records,
+  compact = false,
+}: BorrowRecordsTableProps) {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "PENDING":
-        return { variant: "outline" as const, className: "border-yellow-500 text-yellow-700" };
+        return {
+          variant: "outline" as const,
+          className: "border-yellow-500 text-yellow-700",
+        };
       case "BORROWED":
-        return { variant: "default" as const, className: "bg-blue-500 hover:bg-blue-600" };
+        return {
+          variant: "default" as const,
+          className: "bg-blue-500 hover:bg-blue-600",
+        };
       case "RETURNED":
-        return { variant: "default" as const, className: "bg-green-500 hover:bg-green-600" };
+        return {
+          variant: "default" as const,
+          className: "bg-green-500 hover:bg-green-600",
+        };
       default:
         return { variant: "outline" as const };
     }
@@ -53,7 +65,8 @@ export default function BorrowRecordsTable({ records, compact = false }: BorrowR
         </TableHeader>
         <TableBody>
           {records.map((record) => {
-            const isOverdue = new Date(record.dueDate) < new Date() && !record.returnDate;
+            const isOverdue =
+              new Date(record.dueDate) < new Date() && !record.returnDate;
             const styles = getStatusStyles(record.status);
 
             return (
@@ -63,7 +76,8 @@ export default function BorrowRecordsTable({ records, compact = false }: BorrowR
                     <div className="font-medium">{record.user.name}</div>
                     {!compact && (
                       <div className="text-xs text-muted-foreground">
-                        {record.config.class}-{record.config.section} • {record.config.rollNo}
+                        {record.config.class}-{record.config.section} •{" "}
+                        {record.config.rollNo}
                       </div>
                     )}
                   </div>
@@ -77,7 +91,9 @@ export default function BorrowRecordsTable({ records, compact = false }: BorrowR
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : ''}`}>
+                  <div
+                    className={`flex items-center gap-1 ${isOverdue ? "text-red-600" : ""}`}
+                  >
                     <ClockIcon className="w-3 h-3" />
                     <span className="text-sm">
                       {new Date(record.dueDate).toLocaleDateString()}
@@ -104,7 +120,9 @@ export default function BorrowRecordsTable({ records, compact = false }: BorrowR
                         </span>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground text-sm">Not returned</span>
+                      <span className="text-muted-foreground text-sm">
+                        Not returned
+                      </span>
                     )}
                   </TableCell>
                 )}

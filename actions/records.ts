@@ -1,14 +1,61 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { getBorrowRecords as getBorrowRecordsService, RecordSearchOptions } from "@/lib/services/records";
+import {
+  getBorrowRecords as getBorrowRecordsService,
+  getBorrowRecordById as getBorrowRecordByIdService,
+  updateBorrowRecordStatus,
+  updateBookAvailability,
+  deleteBorrowRecord,
+  getBookAvailability,
+  type RecordSearchOptions,
+  type BorrowRecordWithDetails,
+  type PaginatedRecordsResponse,
+} from "@/lib/services/records";
 import { db } from "@/database/drizzle";
-import { borrowRecords, books, config } from "@/database/schema";
-import { eq, sql } from "drizzle-orm";
+import { config } from "@/database/schema";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 
-export async function getBorrowRecords(options: RecordSearchOptions & { bookId?: string }) {
+// Helper function to check authentication and get user config
+async function checkAuthAndGetConfig() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("Authentication required");
+  }
+
+  const [userConfig] = await db
+    .select()
+    .from(config)
+    .where(eq(config.userId, session.user.id))
+    .limit(1);
+
+  if (!userConfig) {
+    throw new Error("User configuration not found");
+  }
+
+  return { user: session.user, config: userConfig };
+}
+
+// Helper function to check admin/moderator permissions
+function checkAdminPermissions(userConfig: any) {
+  if (!["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
+    throw new Error(
+      "Only administrators and moderators can perform this action",
+    );
+  }
+}
+
+export async function getBorrowRecords(options: RecordSearchOptions): Promise<{
+  success: boolean;
+  data?: PaginatedRecordsResponse;
+  message?: string;
+}> {
   try {
     const result = await getBorrowRecordsService(options);
     return {
@@ -20,56 +67,88 @@ export async function getBorrowRecords(options: RecordSearchOptions & { bookId?:
     return {
       success: false,
       message: "Failed to fetch borrow records",
-      data: null,
     };
   }
 }
 
-export async function approveRecord(recordId: string) {
+export async function getBorrowRecordById(recordId: string): Promise<{
+  success: boolean;
+  data?: BorrowRecordWithDetails;
+  message?: string;
+}> {
   try {
-    // Check authentication and permissions
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const record = await getBorrowRecordByIdService(recordId);
 
-    if (!session) {
+    if (!record) {
       return {
         success: false,
-        message: "Authentication required",
+        message: "Record not found",
       };
     }
 
-    const currentUser = session.user;
+    return {
+      success: true,
+      data: record,
+    };
+  } catch (error) {
+    console.error("Error fetching borrow record:", error);
+    return {
+      success: false,
+      message: "Failed to fetch borrow record",
+    };
+  }
+}
 
-    // Check if user is admin/moderator
-    const [userConfig] = await db
-      .select()
-      .from(config)
-      .where(eq(config.userId, currentUser.id))
-      .limit(1);
+export async function getUserBorrowRecords(
+  userId: string,
+  options: RecordSearchOptions = {},
+): Promise<{
+  success: boolean;
+  data?: PaginatedRecordsResponse;
+  message?: string;
+}> {
+  try {
+    const { user: currentUser, config: userConfig } =
+      await checkAuthAndGetConfig();
 
-    if (!userConfig) {
+    // Check if user is accessing their own records or is admin
+    if (
+      currentUser.id !== userId &&
+      !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")
+    ) {
       return {
         success: false,
-        message: "User configuration not found",
+        message: "Unauthorized to access these records",
       };
     }
 
-    // Only ADMIN or MODERATOR can approve borrow requests
-    if (!["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
-      return {
-        success: false,
-        message: "Only administrators and moderators can approve borrow requests",
-      };
-    }
+    const result = await getBorrowRecordsService({ ...options, userId });
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    console.error("Error fetching user borrow records:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch user borrow records",
+    };
+  }
+}
+
+export async function approveRecord(recordId: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
+  try {
+    const { config: userConfig } = await checkAuthAndGetConfig();
+    checkAdminPermissions(userConfig);
 
     // Get the current borrow record
-    const [record] = await db
-      .select()
-      .from(borrowRecords)
-      .where(eq(borrowRecords.id, recordId))
-      .limit(1);
-
+    const record = await getBorrowRecordByIdService(recordId);
     if (!record) {
       return {
         success: false,
@@ -85,56 +164,29 @@ export async function approveRecord(recordId: string) {
       };
     }
 
-    // Get the book to check availability
-    const [book] = await db
-      .select()
-      .from(books)
-      .where(eq(books.id, record.bookId))
-      .limit(1);
-
-    if (!book) {
+    // Check book availability
+    const availability = await getBookAvailability(record.bookId);
+    if (!availability || availability.availableCopies <= 0) {
       return {
         success: false,
-        message: "Book not found",
-      };
-    }
-
-    // Check if book is still available
-    if (book.availableCopies <= 0) {
-      return {
-        success: false,
-        message: `This book is no longer available. All ${book.totalCopies} copies are currently borrowed.`,
+        message: `This book is no longer available. All ${availability?.totalCopies || 0} copies are currently borrowed.`,
       };
     }
 
     // Calculate due date: 2 weeks (14 days) from approval date
-    const approvalDate = new Date();
-    const dueDate = new Date(approvalDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14);
 
     // Execute approval in transaction
     await db.transaction(async (tx) => {
       // Update borrow record status and due date
-      await tx
-        .update(borrowRecords)
-        .set({
-          status: "BORROWED",
-          dueDate: dueDate.toISOString().split('T')[0],
-          updatedAt: new Date(),
-        })
-        .where(eq(borrowRecords.id, recordId));
+      await updateBorrowRecordStatus(recordId, "BORROWED");
 
       // Decrease book availability
-      await tx
-        .update(books)
-        .set({
-          availableCopies: sql`${books.availableCopies} - 1`,
-          updatedAt: new Date(),
-        })
-        .where(eq(books.id, record.bookId));
+      await updateBookAvailability(record.bookId, -1);
     });
 
     revalidatePath("/admin/records");
-
     return {
       success: true,
       message: "Borrow request approved successfully",
@@ -143,56 +195,25 @@ export async function approveRecord(recordId: string) {
     console.error("Error approving record:", error);
     return {
       success: false,
-      message: "Failed to approve borrow request",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to approve borrow request",
     };
   }
 }
 
-export async function rejectRecord(recordId: string) {
+export async function rejectRecord(recordId: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
   try {
-    // Check authentication and permissions
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const { config: userConfig } = await checkAuthAndGetConfig();
+    checkAdminPermissions(userConfig);
 
-    if (!session) {
-      return {
-        success: false,
-        message: "Authentication required",
-      };
-    }
-
-    const currentUser = session.user;
-
-    // Check if user is admin/moderator
-    const [userConfig] = await db
-      .select()
-      .from(config)
-      .where(eq(config.userId, currentUser.id))
-      .limit(1);
-
-    if (!userConfig) {
-      return {
-        success: false,
-        message: "User configuration not found",
-      };
-    }
-
-    // Only ADMIN or MODERATOR can reject borrow requests
-    if (!["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
-      return {
-        success: false,
-        message: "Only administrators and moderators can reject borrow requests",
-      };
-    }
-
-    // Delete the record (rejected requests are removed)
-    await db
-      .delete(borrowRecords)
-      .where(eq(borrowRecords.id, recordId));
+    await deleteBorrowRecord(recordId);
 
     revalidatePath("/admin/records");
-
     return {
       success: true,
       message: "Borrow request rejected successfully",
@@ -201,78 +222,50 @@ export async function rejectRecord(recordId: string) {
     console.error("Error rejecting record:", error);
     return {
       success: false,
-      message: "Failed to reject borrow request",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to reject borrow request",
     };
   }
 }
 
-export async function returnRecord(recordId: string) {
+export async function returnRecord(recordId: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
   try {
-    // Check authentication and permissions
-    const session = await auth.api.getSession({
-      headers: await headers(),
+    const { config: userConfig } = await checkAuthAndGetConfig();
+    checkAdminPermissions(userConfig);
+
+    // Get the record to get book ID
+    const record = await getBorrowRecordByIdService(recordId);
+    if (!record) {
+      return {
+        success: false,
+        message: "Record not found",
+      };
+    }
+
+    if (record.status !== "BORROWED") {
+      return {
+        success: false,
+        message: "Only borrowed books can be returned",
+      };
+    }
+
+    const returnDate = new Date().toISOString().split("T")[0];
+
+    // Execute return in transaction
+    await db.transaction(async (tx) => {
+      // Update record with return date and status
+      await updateBorrowRecordStatus(recordId, "RETURNED", returnDate);
+
+      // Increase available copies
+      await updateBookAvailability(record.bookId, 1);
     });
 
-    if (!session) {
-      return {
-        success: false,
-        message: "Authentication required",
-      };
-    }
-
-    const currentUser = session.user;
-
-    // Check if user is admin/moderator
-    const [userConfig] = await db
-      .select()
-      .from(config)
-      .where(eq(config.userId, currentUser.id))
-      .limit(1);
-
-    if (!userConfig) {
-      return {
-        success: false,
-        message: "User configuration not found",
-      };
-    }
-
-    // Only ADMIN or MODERATOR can mark books as returned
-    if (!["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
-      return {
-        success: false,
-        message: "Only administrators and moderators can mark books as returned",
-      };
-    }
-
-    // Update record with return date and status
-    await db
-      .update(borrowRecords)
-      .set({
-        returnDate: new Date().toISOString().split('T')[0],
-        status: "RETURNED",
-        updatedAt: new Date()
-      })
-      .where(eq(borrowRecords.id, recordId));
-
-    // Increase available copies
-    const record = await db
-      .select({ bookId: borrowRecords.bookId })
-      .from(borrowRecords)
-      .where(eq(borrowRecords.id, recordId))
-      .limit(1);
-
-    if (record[0]) {
-      await db
-        .update(books)
-        .set({
-          availableCopies: sql`${books.availableCopies} + 1`,
-          updatedAt: new Date()
-        })
-        .where(eq(books.id, record[0].bookId));
-    }
-
     revalidatePath("/admin/records");
-
     return {
       success: true,
       message: "Book marked as returned successfully",
@@ -281,20 +274,43 @@ export async function returnRecord(recordId: string) {
     console.error("Error returning record:", error);
     return {
       success: false,
-      message: "Failed to mark book as returned",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to mark book as returned",
     };
   }
 }
 
-export async function exportRecordsToCSV(options: RecordSearchOptions) {
+export async function exportRecordsToCSV(
+  options: RecordSearchOptions,
+): Promise<{
+  success: boolean;
+  data?: any[];
+  message?: string;
+}> {
   try {
-    // Get all records without pagination for export
-    const allRecords = await getBorrowRecordsService({ ...options, limit: 10000, page: 1 });
+    const { config: userConfig } = await checkAuthAndGetConfig();
+    checkAdminPermissions(userConfig);
 
-    const csvData = allRecords.records.map(record => {
-      const daysOverdue = record.status === "BORROWED" && !record.returnDate
-        ? Math.max(0, Math.floor((new Date().getTime() - new Date(record.dueDate).getTime()) / (1000 * 60 * 60 * 24)))
-        : 0;
+    // Get all records without pagination for export
+    const allRecords = await getBorrowRecordsService({
+      ...options,
+      limit: 10000,
+      page: 1,
+    });
+
+    const csvData = allRecords.records.map((record) => {
+      const daysOverdue =
+        record.status === "BORROWED" && !record.returnDate
+          ? Math.max(
+              0,
+              Math.floor(
+                (new Date().getTime() - new Date(record.dueDate).getTime()) /
+                  (1000 * 60 * 60 * 24),
+              ),
+            )
+          : 0;
 
       return {
         userName: record.user.name,
@@ -306,7 +322,9 @@ export async function exportRecordsToCSV(options: RecordSearchOptions) {
         bookAuthor: record.book.author,
         borrowDate: new Date(record.borrowDate).toLocaleDateString(),
         dueDate: new Date(record.dueDate).toLocaleDateString(),
-        returnDate: record.returnDate ? new Date(record.returnDate).toLocaleDateString() : null,
+        returnDate: record.returnDate
+          ? new Date(record.returnDate).toLocaleDateString()
+          : null,
         status: record.status,
         daysOverdue,
       };
@@ -320,8 +338,8 @@ export async function exportRecordsToCSV(options: RecordSearchOptions) {
     console.error("Error exporting records:", error);
     return {
       success: false,
-      message: "Failed to export records",
-      data: null,
+      message:
+        error instanceof Error ? error.message : "Failed to export records",
     };
   }
 }

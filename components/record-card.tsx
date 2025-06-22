@@ -15,10 +15,12 @@ import { books, BorrowRecord, Book } from "@/database/schema";
 import { eq } from "drizzle-orm";
 
 interface RecordCardProps {
-  record: {
-    record: BorrowRecord;
-    book: Book;
-  } | BorrowRecord;
+  record:
+    | {
+        record: BorrowRecord;
+        book: Book;
+      }
+    | BorrowRecord;
 }
 
 export default async function RecordCard({ record }: RecordCardProps) {
@@ -26,25 +28,25 @@ export default async function RecordCard({ record }: RecordCardProps) {
   let book: Book;
 
   // Handle both formats: joined data or separate record
-  if ('record' in record && 'book' in record) {
+  if ("record" in record && "book" in record) {
     // Joined data from dashboard
     borrowRecord = record.record;
     book = record.book;
   } else {
     // Just a borrow record, need to fetch book
     borrowRecord = record as BorrowRecord;
-    
+
     // Fetch book details using Drizzle
     const [bookData] = await db
       .select()
       .from(books)
       .where(eq(books.id, borrowRecord.bookId))
       .limit(1);
-    
+
     if (!bookData) {
       return <div>Book not found</div>;
     }
-    
+
     book = bookData;
   }
 
@@ -56,10 +58,10 @@ export default async function RecordCard({ record }: RecordCardProps) {
     borrowRecord.status === "RETURNED"
       ? "default"
       : borrowRecord.status === "BORROWED"
-      ? "secondary"
-      : borrowRecord.status === "PENDING"
-      ? "outline"
-      : "secondary";
+        ? "secondary"
+        : borrowRecord.status === "PENDING"
+          ? "outline"
+          : "secondary";
 
   // Check record status for conditional rendering
   const isPending = borrowRecord.status === "PENDING";
@@ -67,7 +69,9 @@ export default async function RecordCard({ record }: RecordCardProps) {
   const isBorrowed = borrowRecord.status === "BORROWED";
 
   // Check if book is overdue (for borrowed books)
-  const isOverdue = isBorrowed && borrowRecord.dueDate && 
+  const isOverdue =
+    isBorrowed &&
+    borrowRecord.dueDate &&
     new Date(borrowRecord.dueDate) < new Date();
 
   const displayBadgeVariant = isOverdue ? "destructive" : badgeVariant;
@@ -104,7 +108,9 @@ export default async function RecordCard({ record }: RecordCardProps) {
         </CardContent>
       </Card>
       <div className="mt-4 text-center bg-card p-4 rounded-lg shadow-md">
-        <h3 className="text-lg max-w-xs sm:max-w-full mx-auto font-semibold truncate">{book.title}</h3>
+        <h3 className="text-lg max-w-xs sm:max-w-full mx-auto font-semibold truncate">
+          {book.title}
+        </h3>
         <p className="text-sm max-w-xs sm:max-w-full mx-auto text-muted-foreground truncate">
           {book.author || "Unknown Author"}
         </p>
@@ -112,9 +118,7 @@ export default async function RecordCard({ record }: RecordCardProps) {
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Status</span>
-              <Badge variant={displayBadgeVariant}>
-                {displayStatus}
-              </Badge>
+              <Badge variant={displayBadgeVariant}>{displayStatus}</Badge>
             </div>
             {borrowRecord.borrowDate && (
               <div className="flex items-center justify-between">
@@ -144,10 +148,7 @@ export default async function RecordCard({ record }: RecordCardProps) {
             )}
           </div>
         </div>
-        <Link
-          className="w-full"
-          href={`/records/${borrowRecord.id}`}
-        >
+        <Link className="w-full" href={`/records/${borrowRecord.id}`}>
           <Button variant="secondary" className="w-full mt-4">
             View Details
           </Button>

@@ -58,7 +58,7 @@ export async function setupUser(form: UserConfigSchemaType) {
         class: userClass,
         section: section,
         rollNo: rollNo,
-        lastActiveAt: (new Date()).toISOString(),
+        lastActiveAt: new Date().toISOString(),
       })
       .returning();
 
@@ -102,7 +102,9 @@ export async function getUserConfig() {
 }
 
 // Helper function to update user configuration
-export async function updateUserConfig(updates: Partial<typeof config.$inferInsert>) {
+export async function updateUserConfig(
+  updates: Partial<typeof config.$inferInsert>,
+) {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),

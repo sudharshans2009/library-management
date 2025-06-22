@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { Background } from "@/components/background";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { User, Shield, Settings as SettingsIcon } from "lucide-react";
+import { User, Shield, Settings as SettingsIcon, Bell, Clock } from "lucide-react";
 import { ProfileSettings } from "@/components/account/profile-settings";
 import { SecuritySettings } from "@/components/account/security-settings";
 import { useSession } from "@/lib/auth/client";
 import { redirect } from "next/navigation";
+import { NotificationSettings } from "@/components/account/notification-settings";
 
 export default function AccountPage() {
   const { data: session, isPending } = useSession();
@@ -17,11 +16,19 @@ export default function AccountPage() {
 
   if (isPending) {
     return (
-      <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
+      <main className="relative w-full min-h-screen">
         <Background />
-        <div className="flex flex-col items-center justify-center max-w-7xl mx-auto min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading account...</p>
+        <div className="flex flex-col items-center justify-center max-w-7xl mx-auto min-h-screen px-5">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
+              <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+            </div>
+            <p className="text-lg font-medium">Loading your account...</p>
+            <p className="text-sm text-muted-foreground">
+              Please wait while we fetch your information
+            </p>
+          </div>
         </div>
       </main>
     );
@@ -53,15 +60,32 @@ export default function AccountPage() {
           </div>
 
           <div className="w-full max-w-4xl">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="profile" className="flex items-center gap-2">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger
+                  value="profile"
+                  className="flex items-center gap-2"
+                >
                   <SettingsIcon className="w-4 h-4" />
                   Profile Settings
                 </TabsTrigger>
-                <TabsTrigger value="security" className="flex items-center gap-2">
+                <TabsTrigger
+                  value="security"
+                  className="flex items-center gap-2"
+                >
                   <Shield className="w-4 h-4" />
                   Security
+                </TabsTrigger>
+                <TabsTrigger
+                  value="notifications"
+                  className="flex items-center gap-2"
+                >
+                  <Bell className="w-4 h-4" />
+                  Notifications
                 </TabsTrigger>
               </TabsList>
 
@@ -71,6 +95,10 @@ export default function AccountPage() {
 
               <TabsContent value="security" className="mt-6">
                 <SecuritySettings user={session.user} />
+              </TabsContent>
+
+              <TabsContent value="notifications" className="mt-6">
+                <NotificationSettings user={session.user} />
               </TabsContent>
             </Tabs>
           </div>

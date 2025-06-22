@@ -10,7 +10,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
 export type User = InferSelectModel<typeof user>;
 export type NewUser = InferInsertModel<typeof user>;
@@ -33,11 +33,16 @@ export type NewBook = InferInsertModel<typeof books>;
 export type BorrowRecord = InferSelectModel<typeof borrowRecords>;
 export type NewBorrowRecord = InferInsertModel<typeof borrowRecords>;
 
-export type StatusEnum = typeof STATUS_ENUM.enumValues[number];
-export type RoleEnum = typeof ROLE_ENUM.enumValues[number];
-export type BorrowStatusEnum = typeof BORROW_STATUS_ENUM.enumValues[number];
-export type ClassEnum = typeof CLASS_ENUM.enumValues[number];
-export type SectionEnum = typeof SECTION_ENUM.enumValues[number];
+export type Request = InferSelectModel<typeof requests>;
+export type NewRequest = InferInsertModel<typeof requests>;
+
+export type StatusEnum = (typeof STATUS_ENUM.enumValues)[number];
+export type RoleEnum = (typeof ROLE_ENUM.enumValues)[number];
+export type BorrowStatusEnum = (typeof BORROW_STATUS_ENUM.enumValues)[number];
+export type ClassEnum = (typeof CLASS_ENUM.enumValues)[number];
+export type SectionEnum = (typeof SECTION_ENUM.enumValues)[number];
+export type RequestStatusEnum = (typeof REQUEST_STATUS_ENUM.enumValues)[number];
+export type RequestTypeEnum = (typeof REQUEST_TYPE_ENUM.enumValues)[number];
 
 export const STATUS_ENUM = pgEnum("status", [
   "PENDING",
@@ -67,15 +72,25 @@ export const CLASS_ENUM = pgEnum("class", [
   "10",
   "11",
   "12",
-  "Teacher"
+  "Teacher",
 ]);
 
-export const SECTION_ENUM = pgEnum("section", [
-  "A",
-  "B",
-  "C",
-  "D",
-  "N/A"
+export const SECTION_ENUM = pgEnum("section", ["A", "B", "C", "D", "N/A"]);
+
+export const REQUEST_STATUS_ENUM = pgEnum("request_status", [
+  "PENDING",
+  "APPROVED",
+  "REJECTED",
+  "RESCINDED",
+]);
+
+export const REQUEST_TYPE_ENUM = pgEnum("request_type", [
+  "EXTEND_BORROW",
+  "REPORT_LOST",
+  "REPORT_DAMAGE",
+  "EARLY_RETURN",
+  "CHANGE_DUE_DATE",
+  "OTHER",
 ]);
 
 // Better Auth tables
@@ -187,6 +202,29 @@ export const borrowRecords = pgTable("borrow_records", {
   dueDate: date("due_date").notNull(),
   returnDate: date("return_date"),
   status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const requests = pgTable("requests", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  userId: text("user_id")
+    .references(() => user.id)
+    .notNull(),
+  borrowRecordId: uuid("borrow_record_id")
+    .references(() => borrowRecords.id)
+    .notNull(),
+  type: REQUEST_TYPE_ENUM("type").notNull(),
+  reason: text("reason").notNull(),
+  description: text("description"),
+  requestedDate: date("requested_date"),
+  status: REQUEST_STATUS_ENUM("status").default("PENDING").notNull(),
+  adminResponse: text("admin_response"),
+  adminId: text("admin_id").references(() => user.id),
+  rescindedAt: timestamp("rescinded_at", { withTimezone: true }),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()

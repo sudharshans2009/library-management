@@ -29,9 +29,7 @@ export const VerificationEmail = ({
           <Heading style={h1}>📚 SS.library</Heading>
         </Section>
         <Heading style={h2}>Verify your email address</Heading>
-        <Text style={text}>
-          Hi {userName},
-        </Text>
+        <Text style={text}>Hi {userName},</Text>
         <Text style={text}>
           Welcome to SS.library! To complete your registration and start
           borrowing books, please verify your email address by clicking the

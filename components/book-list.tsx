@@ -1,7 +1,7 @@
 import React from "react";
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
-import { count, desc } from "drizzle-orm";
+import { count, desc, like, eq, and, ne } from "drizzle-orm";
 import {
   Pagination,
   PaginationContent,
@@ -19,15 +19,17 @@ interface BooksListProps {
   searchParams: {
     page?: string;
     genre?: string;
+    search?: string;
     exclude?: string;
   };
   showTitle?: boolean;
   showDescription?: boolean;
   className?: string;
+  limit?: number;
 }
 
 interface PaginationResult {
-  books: typeof books.$inferSelect[];
+  books: (typeof books.$inferSelect)[];
   totalCount: number;
   totalPages: number;
   currentPage: number;
@@ -37,14 +39,37 @@ interface PaginationResult {
 
 async function getBooksWithPagination(
   page: number,
-  limit: number
+  limit: number,
+  genre?: string,
+  search?: string,
+  exclude?: string,
 ): Promise<PaginationResult> {
   const offset = (page - 1) * limit;
+
+  // Build where conditions
+  const whereConditions = [];
+
+  if (genre) {
+    whereConditions.push(eq(books.genre, genre));
+  }
+
+  if (search) {
+    whereConditions.push(like(books.title, `%${search}%`));
+  }
+
+  if (exclude) {
+    // Exclude specific book by ID
+    whereConditions.push(ne(books.id, exclude));
+  }
+
+  const whereClause =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   // Get total count
   const [totalCountResult] = await db
     .select({ count: count() })
-    .from(books);
+    .from(books)
+    .where(whereClause);
 
   const totalCount = totalCountResult.count;
   const totalPages = Math.ceil(totalCount / limit);
@@ -53,6 +78,7 @@ async function getBooksWithPagination(
   const booksData = await db
     .select()
     .from(books)
+    .where(whereClause)
     .orderBy(desc(books.createdAt))
     .limit(limit)
     .offset(offset);
@@ -72,9 +98,9 @@ export default async function BooksList({
   showTitle = true,
   showDescription = true,
   className = "",
+  limit = 8,
 }: BooksListProps) {
   const currentPage = parseInt(searchParams.page || "1");
-  const booksPerPage = 8;
 
   const {
     books: booksData,
@@ -82,7 +108,13 @@ export default async function BooksList({
     totalPages,
     hasNextPage,
     hasPrevPage,
-  } = await getBooksWithPagination(currentPage, booksPerPage);
+  } = await getBooksWithPagination(
+    currentPage,
+    limit,
+    searchParams.genre,
+    searchParams.search,
+    searchParams.exclude,
+  );
 
   const generatePaginationItems = () => {
     const items = [];
@@ -122,12 +154,22 @@ export default async function BooksList({
 
   const paginationItems = generatePaginationItems();
 
+  // Build pagination URL with preserved search params
+  const buildPaginationUrl = (page: number | string) => {
+    const params = new URLSearchParams();
+    if (page) params.set("page", page.toString());
+    if (searchParams.genre) params.set("genre", searchParams.genre);
+    if (searchParams.search) params.set("search", searchParams.search);
+    if (searchParams.exclude) params.set("exclude", searchParams.exclude);
+    return `?${params.toString()}`;
+  };
+
   return (
     <section
       id="books"
       className={cn(
         `relative w-full h-full flex flex-col gap-8 items-center justify-center`,
-        className
+        className,
       )}
     >
       {(showTitle || showDescription) && (
@@ -156,7 +198,7 @@ export default async function BooksList({
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={hasPrevPage ? `?page=${currentPage - 1}` : "#"}
+                href={hasPrevPage ? buildPaginationUrl(currentPage - 1) : "#"}
                 className={!hasPrevPage ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -166,7 +208,7 @@ export default async function BooksList({
                   <PaginationEllipsis />
                 ) : (
                   <PaginationLink
-                    href={`?page=${item}`}
+                    href={buildPaginationUrl(item)}
                     isActive={currentPage === item}
                   >
                     {item}
@@ -176,7 +218,7 @@ export default async function BooksList({
             ))}
             <PaginationItem>
               <PaginationNext
-                href={hasNextPage ? `?page=${currentPage + 1}` : "#"}
+                href={hasNextPage ? buildPaginationUrl(currentPage + 1) : "#"}
                 className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -197,7 +239,7 @@ export default async function BooksList({
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={hasPrevPage ? `?page=${currentPage - 1}` : "#"}
+                href={hasPrevPage ? buildPaginationUrl(currentPage - 1) : "#"}
                 className={!hasPrevPage ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -207,7 +249,7 @@ export default async function BooksList({
                   <PaginationEllipsis />
                 ) : (
                   <PaginationLink
-                    href={`?page=${item}`}
+                    href={buildPaginationUrl(item)}
                     isActive={currentPage === item}
                   >
                     {item}
@@ -217,7 +259,7 @@ export default async function BooksList({
             ))}
             <PaginationItem>
               <PaginationNext
-                href={hasNextPage ? `?page=${currentPage + 1}` : "#"}
+                href={hasNextPage ? buildPaginationUrl(currentPage + 1) : "#"}
                 className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -229,6 +271,11 @@ export default async function BooksList({
       {booksData.length === 0 && (
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground">No books found.</p>
+          {(searchParams.search || searchParams.genre) && (
+            <p className="text-sm text-muted-foreground mt-2">
+              Try adjusting your search criteria.
+            </p>
+          )}
         </div>
       )}
     </section>

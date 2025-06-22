@@ -125,15 +125,17 @@ export async function getUserSettings() {
 }
 
 // Get users with pagination (replaces Payload's findMany)
-export async function getUsersWithPagination(options: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
-  role?: "USER" | "ADMIN" | "MODERATOR" | "GUEST";
-  class?: string;
-  section?: string;
-} = {}) {
+export async function getUsersWithPagination(
+  options: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+    role?: "USER" | "ADMIN" | "MODERATOR" | "GUEST";
+    class?: string;
+    section?: string;
+  } = {},
+) {
   const {
     page = 1,
     limit = 20,
@@ -154,8 +156,8 @@ export async function getUsersWithPagination(options: {
       whereConditions.push(
         or(
           ilike(config.fullName, `%${search}%`),
-          ilike(config.rollNo, `%${search}%`)
-        )
+          ilike(config.rollNo, `%${search}%`),
+        ),
       );
     }
 

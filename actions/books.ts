@@ -185,13 +185,13 @@ export async function borrowBook(options: BorrowBookOptions) {
       .where(
         and(
           eq(borrowRecords.userId, currentUser.id),
-          eq(borrowRecords.bookId, bookId)
-        )
+          eq(borrowRecords.bookId, bookId),
+        ),
       );
 
     // Check for active borrows (user already has this book)
     const activeBorrow = userBorrowHistory.find((borrow) =>
-      ["PENDING", "BORROWED"].includes(borrow.status)
+      ["PENDING", "BORROWED"].includes(borrow.status),
     );
 
     if (activeBorrow) {
@@ -204,7 +204,7 @@ export async function borrowBook(options: BorrowBookOptions) {
 
     // Check for re-borrowing confirmation
     const returnedBorrow = userBorrowHistory.find(
-      (borrow) => borrow.status === "RETURNED"
+      (borrow) => borrow.status === "RETURNED",
     );
 
     if (returnedBorrow && !confirm) {
@@ -267,9 +267,7 @@ export async function borrowBook(options: BorrowBookOptions) {
 }
 
 // Admin book actions
-export async function getAdminBooks(
-  options: BookSearchOptions = {}
-): Promise<{
+export async function getAdminBooks(options: BookSearchOptions = {}): Promise<{
   success: boolean;
   data?: PaginatedBooksResponse;
   message?: string;
@@ -296,8 +294,8 @@ export async function getAdminBooks(
         or(
           like(books.title, `%${search}%`),
           like(books.author, `%${search}%`),
-          like(books.genre, `%${search}%`)
-        )
+          like(books.genre, `%${search}%`),
+        ),
       );
     }
 
@@ -377,13 +375,13 @@ export async function getAdminBooks(
 
     if (availability) {
       filteredBooks = filteredBooks.filter(
-        (book) => book.availability === availability
+        (book) => book.availability === availability,
       );
     }
 
     if (popularity) {
       filteredBooks = filteredBooks.filter(
-        (book) => book.popularity === popularity
+        (book) => book.popularity === popularity,
       );
     }
 
@@ -496,7 +494,7 @@ export async function deleteBook(bookId: string) {
 export async function updateBookCopies(
   bookId: string,
   totalCopies: number,
-  availableCopies: number
+  availableCopies: number,
 ) {
   try {
     // Check authentication and permissions
@@ -714,7 +712,7 @@ export async function updateBook(
     coverUrl: string;
     videoUrl: string;
     coverColor: string;
-  }
+  },
 ) {
   try {
     // Check authentication and permissions

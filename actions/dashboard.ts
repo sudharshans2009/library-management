@@ -3,7 +3,7 @@
 
 import { db } from "@/database/drizzle";
 import { config, books, borrowRecords, user } from "@/database/schema";
-import { eq, and, or, count, sql, desc, gte } from "drizzle-orm";
+import { eq, and, count, sql, desc, gte } from "drizzle-orm";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 
@@ -112,7 +112,7 @@ export async function getDashboardStats(): Promise<{
       .where(eq(borrowRecords.status, "BORROWED"));
 
     // Get overdue borrows
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     const [overdueStats] = await db
       .select({
         overdueBorrows: count(),
@@ -121,8 +121,8 @@ export async function getDashboardStats(): Promise<{
       .where(
         and(
           eq(borrowRecords.status, "BORROWED"),
-          sql`${borrowRecords.dueDate} < ${today}`
-        )
+          sql`${borrowRecords.dueDate} < ${today}`,
+        ),
       );
 
     // Get pending requests
@@ -149,7 +149,12 @@ export async function getDashboardStats(): Promise<{
         returns: sql<number>`COUNT(CASE WHEN ${borrowRecords.status} = 'RETURNED' THEN 1 END)`,
       })
       .from(borrowRecords)
-      .where(gte(borrowRecords.createdAt, new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)))
+      .where(
+        gte(
+          borrowRecords.createdAt,
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        ),
+      )
       .groupBy(sql`DATE(${borrowRecords.createdAt})`)
       .orderBy(sql`DATE(${borrowRecords.createdAt})`);
 
@@ -200,7 +205,10 @@ export async function getDashboardStats(): Promise<{
       .limit(3);
 
     const recentActivity = [...recentBorrows, ...recentUsers]
-      .sort((a, b) => new Date(b.timestamp!).getTime() - new Date(a.timestamp!).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp!).getTime() - new Date(a.timestamp!).getTime(),
+      )
       .slice(0, 8);
 
     // Get today's statistics
@@ -228,18 +236,18 @@ export async function getDashboardStats(): Promise<{
         overdueBorrows: overdueStats.overdueBorrows || 0,
         pendingRequests: pendingStats.pendingRequests || 0,
         pendingUsers: pendingUserStats.pendingUsers || 0,
-        borrowingTrends: borrowingTrends.map(trend => ({
+        borrowingTrends: borrowingTrends.map((trend) => ({
           date: trend.date,
           borrows: Number(trend.borrows),
           returns: Number(trend.returns),
         })),
-        popularBooks: popularBooks.map(book => ({
+        popularBooks: popularBooks.map((book) => ({
           id: book.id,
           title: book.title,
           author: book.author,
           borrowCount: Number(book.borrowCount),
         })),
-        recentActivity: recentActivity.map(activity => ({
+        recentActivity: recentActivity.map((activity) => ({
           id: activity.id,
           type: activity.type as any,
           message: activity.message,

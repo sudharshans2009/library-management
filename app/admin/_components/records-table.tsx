@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -450,9 +451,17 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
 
   if (query.isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading records...</span>
+      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto px-5">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
+            <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+          </div>
+          <p className="text-lg font-medium">Loading your records...</p>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we fetch your information
+          </p>
+        </div>
       </div>
     );
   }

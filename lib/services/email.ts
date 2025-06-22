@@ -33,13 +33,13 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
 export async function sendVerificationEmail(
   to: string,
   userName: string,
-  verificationUrl: string
+  verificationUrl: string,
 ) {
   const html = await render(
     VerificationEmail({
       userName,
       verificationUrl,
-    })
+    }),
   );
 
   return sendEmail({
@@ -52,13 +52,13 @@ export async function sendVerificationEmail(
 export async function sendPasswordResetEmail(
   to: string,
   userName: string,
-  resetUrl: string
+  resetUrl: string,
 ) {
   const html = await render(
     ResetPasswordEmail({
       userName,
       resetUrl,
-    })
+    }),
   );
 
   return sendEmail({
@@ -71,13 +71,13 @@ export async function sendPasswordResetEmail(
 export async function sendWelcomeEmail(
   to: string,
   userName: string,
-  libraryUrl: string
+  libraryUrl: string,
 ) {
   const html = await render(
     WelcomeEmail({
       userName,
       libraryUrl,
-    })
+    }),
   );
 
   return sendEmail({

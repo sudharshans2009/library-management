@@ -12,8 +12,8 @@ export default function AdminBooksPage() {
           <div>
             <h1 className="text-3xl font-bold">Books Management</h1>
             <p className="text-muted-foreground mt-2">
-              Manage all books in the library system - view popular books, latest
-              additions, and track availability
+              Manage all books in the library system - view popular books,
+              latest additions, and track availability
             </p>
           </div>
           <Link href="/admin/books/new">
@@ -23,7 +23,7 @@ export default function AdminBooksPage() {
             </Button>
           </Link>
         </div>
-        
+
         <div className="flex-1">
           <BooksTable />
         </div>

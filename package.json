@@ -45,6 +45,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/mime-types": "^3.0.1",
     "@vercel/blob": "^1.1.1",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "better-auth": "^1.2.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

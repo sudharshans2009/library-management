@@ -61,7 +61,7 @@ export default function SignIn() {
           onError: (ctx) => {
             alert(ctx.error.message);
           },
-        }
+        },
       );
 
       if (error) {
@@ -88,7 +88,7 @@ export default function SignIn() {
           onError: (ctx) => {
             alert(ctx.error.message);
           },
-        }
+        },
       );
     } catch (error) {
       console.error("Google sign-in failed:", error);
@@ -113,7 +113,7 @@ export default function SignIn() {
           onError: (ctx) => {
             alert(ctx.error.message);
           },
-        }
+        },
       );
     } catch (error) {
       console.error("GitHub sign-in failed:", error);

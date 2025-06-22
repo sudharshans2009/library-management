@@ -29,9 +29,7 @@ export const ResetPasswordEmail = ({
           <Heading style={h1}>📚 SS.library</Heading>
         </Section>
         <Heading style={h2}>Reset your password</Heading>
-        <Text style={text}>
-          Hi {userName},
-        </Text>
+        <Text style={text}>Hi {userName},</Text>
         <Text style={text}>
           We received a request to reset your password for your SS.library
           account. Click the button below to create a new password.
@@ -50,8 +48,8 @@ export const ResetPasswordEmail = ({
           This password reset link will expire in 1 hour for security reasons.
         </Text>
         <Text style={footer}>
-          If you didn&apos;t request a password reset, you can safely ignore this
-          email. Your password will remain unchanged.
+          If you didn&apos;t request a password reset, you can safely ignore
+          this email. Your password will remain unchanged.
         </Text>
       </Container>
     </Body>

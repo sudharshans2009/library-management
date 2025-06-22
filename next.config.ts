@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const { experimental: _experimental, ...nextConfig } = {
+import { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -10,9 +11,6 @@ const { experimental: _experimental, ...nextConfig } = {
       },
     ],
   },
-  turbopack: {
-    resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
-  },
   experimental: {
     reactCompiler: true,
     authInterrupts: true,
@@ -21,7 +19,8 @@ const { experimental: _experimental, ...nextConfig } = {
     ppr: true,
     useCache: true,
     useLightningcss: true,
-    viewTransitions: true,
+    viewTransition: true,
   },
 };
+
 export default nextConfig;

@@ -33,22 +33,27 @@ export default function BookCard({ book }: { book: Book }) {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0 relative mt-auto">
-            <Image
-              src={book.coverUrl || "/placeholder.png"}
-              className="object-cover aspect-[11/16] w-full"
-              alt="Book Cover"
-              width={350}
-              height={500}
-            />
+          <Image
+            src={book.coverUrl || "/placeholder.png"}
+            className="object-cover aspect-[11/16] w-full"
+            alt="Book Cover"
+            width={350}
+            height={500}
+          />
         </CardContent>
       </Card>
       <div className="mt-2 sm:mt-4 text-center bg-card p-2 sm:p-4 rounded-lg shadow-md">
-        <h3 className="text-sm sm:text-lg max-w-xs sm:max-w-full font-semibold truncate mx-auto">{book.title}</h3>
+        <h3 className="text-sm sm:text-lg max-w-xs sm:max-w-full font-semibold truncate mx-auto">
+          {book.title}
+        </h3>
         <p className="text-xs sm:text-sm max-w-xs sm:max-w-full text-muted-foreground truncate mx-auto">
           {book.author ? book.author : "Unknown Author"}
         </p>
         <Link className="w-full" href={`/books/${book.id}`}>
-          <Button variant="secondary" className="w-full mt-2 sm:mt-4 text-xs sm:text-sm h-8 sm:h-10">
+          <Button
+            variant="secondary"
+            className="w-full mt-2 sm:mt-4 text-xs sm:text-sm h-8 sm:h-10"
+          >
             View Details
           </Button>
         </Link>

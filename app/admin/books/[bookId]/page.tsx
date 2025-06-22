@@ -6,14 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { 
-  EditIcon, 
-  BookIcon, 
-  UsersIcon, 
+import {
+  EditIcon,
+  BookIcon,
+  UsersIcon,
   StarIcon,
   TrendingUpIcon,
   ClockIcon,
-  PlayIcon
+  PlayIcon,
 } from "lucide-react";
 import { getBookById, getAdminBooks } from "@/actions/books";
 import { getBorrowRecords } from "@/actions/records";
@@ -25,11 +25,13 @@ interface AdminBookDetailsPageProps {
   }>;
 }
 
-export default async function AdminBookDetailsPage({ params }: AdminBookDetailsPageProps) {
+export default async function AdminBookDetailsPage({
+  params,
+}: AdminBookDetailsPageProps) {
   const { bookId } = await params;
-  
+
   const bookResult = await getBookById(bookId);
-  
+
   if (!bookResult.success || !bookResult.data) {
     notFound();
   }
@@ -49,7 +51,10 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
     limit: 1,
   });
 
-  const bookStats = statsResult.success && statsResult.data?.books[0] ? statsResult.data.books[0] : null;
+  const bookStats =
+    statsResult.success && statsResult.data?.books[0]
+      ? statsResult.data.books[0]
+      : null;
 
   return (
     <main className="relative w-full h-full px-5 z-10">
@@ -85,7 +90,7 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                         className="object-cover"
                       />
                     ) : (
-                      <div 
+                      <div
                         className="w-full h-full flex items-center justify-center"
                         style={{ backgroundColor: book.coverColor }}
                       >
@@ -93,7 +98,7 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="text-center space-y-2">
                     <h2 className="text-xl font-semibold">{book.title}</h2>
                     <p className="text-muted-foreground">by {book.author}</p>
@@ -141,7 +146,9 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                   <div className="flex items-center space-x-2">
                     <BookIcon className="w-8 h-8 text-blue-500" />
                     <div>
-                      <p className="text-2xl font-bold">{book.availableCopies}</p>
+                      <p className="text-2xl font-bold">
+                        {book.availableCopies}
+                      </p>
                       <p className="text-sm text-muted-foreground">Available</p>
                     </div>
                   </div>
@@ -153,8 +160,12 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                   <div className="flex items-center space-x-2">
                     <UsersIcon className="w-8 h-8 text-green-500" />
                     <div>
-                      <p className="text-2xl font-bold">{bookStats?.borrowCount || 0}</p>
-                      <p className="text-sm text-muted-foreground">Total Borrows</p>
+                      <p className="text-2xl font-bold">
+                        {bookStats?.borrowCount || 0}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Total Borrows
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -165,8 +176,12 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                   <div className="flex items-center space-x-2">
                     <ClockIcon className="w-8 h-8 text-orange-500" />
                     <div>
-                      <p className="text-2xl font-bold">{bookStats?.activeBorrows || 0}</p>
-                      <p className="text-sm text-muted-foreground">Active Borrows</p>
+                      <p className="text-2xl font-bold">
+                        {bookStats?.activeBorrows || 0}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Active Borrows
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -182,28 +197,39 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                 <div className="flex items-center justify-between">
                   <span>Copies in use</span>
                   <span className="font-medium">
-                    {book.totalCopies - book.availableCopies} of {book.totalCopies}
+                    {book.totalCopies - book.availableCopies} of{" "}
+                    {book.totalCopies}
                   </span>
                 </div>
-                <Progress 
-                  value={((book.totalCopies - book.availableCopies) / book.totalCopies) * 100} 
+                <Progress
+                  value={
+                    ((book.totalCopies - book.availableCopies) /
+                      book.totalCopies) *
+                    100
+                  }
                   className="h-2"
                 />
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>Available: {book.availableCopies}</span>
                   <span>Total: {book.totalCopies}</span>
                 </div>
-                
+
                 {bookStats && (
                   <div className="pt-2">
-                    <Badge 
+                    <Badge
                       variant={
-                        bookStats.availability === "Available" ? "default" :
-                        bookStats.availability === "Limited" ? "secondary" : "destructive"
+                        bookStats.availability === "Available"
+                          ? "default"
+                          : bookStats.availability === "Limited"
+                            ? "secondary"
+                            : "destructive"
                       }
                       className={
-                        bookStats.availability === "Available" ? "bg-green-500 hover:bg-green-600" :
-                        bookStats.availability === "Limited" ? "border-yellow-500 text-yellow-700" : ""
+                        bookStats.availability === "Available"
+                          ? "bg-green-500 hover:bg-green-600"
+                          : bookStats.availability === "Limited"
+                            ? "border-yellow-500 text-yellow-700"
+                            : ""
                       }
                     >
                       {bookStats.availability}
@@ -249,9 +275,11 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                 </div>
               </CardHeader>
               <CardContent>
-                {borrowRecordsResult.success && borrowRecordsResult.data && borrowRecordsResult.data.records.length > 0 ? (
+                {borrowRecordsResult.success &&
+                borrowRecordsResult.data &&
+                borrowRecordsResult.data.records.length > 0 ? (
                   <>
-                    <BorrowRecordsTable 
+                    <BorrowRecordsTable
                       records={borrowRecordsResult.data.records.slice(0, 5)}
                       compact={true}
                     />
@@ -259,7 +287,8 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                       <div className="mt-4 text-center">
                         <Link href={`/admin/records?bookId=${bookId}`}>
                           <Button variant="outline" size="sm">
-                            View {borrowRecordsResult.data.totalCount - 5} more records
+                            View {borrowRecordsResult.data.totalCount - 5} more
+                            records
                           </Button>
                         </Link>
                       </div>
@@ -268,7 +297,9 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                 ) : (
                   <div className="text-center py-8">
                     <BookIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No borrow records found for this book</p>
+                    <p className="text-muted-foreground">
+                      No borrow records found for this book
+                    </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       This book hasn&apos;t been borrowed yet
                     </p>
@@ -289,23 +320,37 @@ export default async function AdminBookDetailsPage({ params }: AdminBookDetailsP
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Added</span>
-                  <span>{book.createdAt ? new Date(book.createdAt).toLocaleDateString() : 'N/A'}</span>
+                  <span>
+                    {book.createdAt
+                      ? new Date(book.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Last Updated</span>
-                  <span>{book.updatedAt ? new Date(book.updatedAt).toLocaleDateString() : 'N/A'}</span>
+                  <span>
+                    {book.updatedAt
+                      ? new Date(book.updatedAt).toLocaleDateString()
+                      : "N/A"}
+                  </span>
                 </div>
                 {bookStats && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Popularity</span>
-                    <Badge 
+                    <Badge
                       variant={
-                        bookStats.popularity === "High" ? "default" :
-                        bookStats.popularity === "Medium" ? "secondary" : "outline"
+                        bookStats.popularity === "High"
+                          ? "default"
+                          : bookStats.popularity === "Medium"
+                            ? "secondary"
+                            : "outline"
                       }
                       className={
-                        bookStats.popularity === "High" ? "bg-purple-500 hover:bg-purple-600" :
-                        bookStats.popularity === "Medium" ? "bg-blue-500 hover:bg-blue-600" : ""
+                        bookStats.popularity === "High"
+                          ? "bg-purple-500 hover:bg-purple-600"
+                          : bookStats.popularity === "Medium"
+                            ? "bg-blue-500 hover:bg-blue-600"
+                            : ""
                       }
                     >
                       <TrendingUpIcon className="w-3 h-3 mr-1" />

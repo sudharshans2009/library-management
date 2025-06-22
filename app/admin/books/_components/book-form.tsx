@@ -28,13 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { 
-  ImageIcon, 
-  VideoIcon, 
-  Loader2, 
-  UploadIcon,
-  XIcon 
-} from "lucide-react";
+import { VideoIcon, Loader2, UploadIcon, XIcon } from "lucide-react";
 import { createBook, updateBook } from "@/actions/books";
 import { uploadBookCoverAction, uploadBookVideoAction } from "@/actions/upload";
 import { Book } from "@/database/schema";
@@ -44,12 +38,17 @@ const bookSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title too long"),
   author: z.string().min(1, "Author is required").max(255, "Author too long"),
   genre: z.string().min(1, "Genre is required"),
-  rating: z.number().min(1, "Rating must be at least 1").max(5, "Rating cannot exceed 5"),
+  rating: z
+    .number()
+    .min(1, "Rating must be at least 1")
+    .max(5, "Rating cannot exceed 5"),
   description: z.string().min(1, "Description is required"),
   summary: z.string().min(1, "Summary is required"),
   totalCopies: z.number().min(1, "Must have at least 1 copy"),
   availableCopies: z.number().min(0, "Available copies cannot be negative"),
-  coverColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format"),
+  coverColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format"),
 });
 
 type BookFormData = z.infer<typeof bookSchema>;
@@ -61,7 +60,7 @@ interface BookFormProps {
 
 const GENRE_OPTIONS = [
   "Fiction",
-  "Non-Fiction", 
+  "Non-Fiction",
   "Science Fiction",
   "Fantasy",
   "Mystery",
@@ -92,15 +91,19 @@ const GENRE_OPTIONS = [
   "Economics",
   "Politics",
   "History",
-  "Geography"
+  "Geography",
 ];
 
 export default function BookForm({ initialData, mode }: BookFormProps) {
   const router = useRouter();
   const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string>(initialData?.coverUrl || "");
+  const [coverPreview, setCoverPreview] = useState<string>(
+    initialData?.coverUrl || "",
+  );
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoPreview, setVideoPreview] = useState<string>(initialData?.videoUrl || "");
+  const [videoPreview, setVideoPreview] = useState<string>(
+    initialData?.videoUrl || "",
+  );
 
   const form = useForm<BookFormData>({
     resolver: zodResolver(bookSchema),
@@ -171,9 +174,9 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
     onSuccess: (result) => {
       if (result.success) {
         toast.success(
-          mode === "edit" 
-            ? "Book updated successfully" 
-            : "Book created successfully"
+          mode === "edit"
+            ? "Book updated successfully"
+            : "Book created successfully",
         );
         router.push("/admin/books");
       } else {
@@ -275,7 +278,10 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Genre</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a genre" />
@@ -301,13 +307,15 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                   <FormItem>
                     <FormLabel>Rating (1-5)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="1" 
-                        max="5" 
+                      <Input
+                        type="number"
+                        min="1"
+                        max="5"
                         step="0.1"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -323,10 +331,10 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Enter book description"
                       className="min-h-[120px]"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -341,10 +349,10 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                 <FormItem>
                   <FormLabel>Summary</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Enter book summary"
                       className="min-h-[80px]"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -368,11 +376,13 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                   <FormItem>
                     <FormLabel>Total Copies</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         min="1"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -390,12 +400,14 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                   <FormItem>
                     <FormLabel>Available Copies</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         min="0"
                         max={form.watch("totalCopies")}
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -431,7 +443,11 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
                     <FormItem>
                       <FormLabel className="text-sm">Fallback Color</FormLabel>
                       <FormControl>
-                        <Input type="color" className="w-12 h-8 p-1" {...field} />
+                        <Input
+                          type="color"
+                          className="w-12 h-8 p-1"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -554,17 +570,10 @@ export default function BookForm({ initialData, mode }: BookFormProps) {
 
         {/* Submit */}
         <div className="flex items-center justify-end space-x-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={submitMutation.isPending}
-          >
+          <Button type="submit" disabled={submitMutation.isPending}>
             {submitMutation.isPending ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : null}

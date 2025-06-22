@@ -6,11 +6,11 @@ import { redirect } from "next/navigation";
 import { db } from "@/database/drizzle";
 import { user, account, config } from "@/database/schema";
 import { eq } from "drizzle-orm";
-import { 
-  ProfileUpdateSchema, 
+import {
+  ProfileUpdateSchema,
   PasswordUpdateSchema,
   ProfileUpdateSchemaType,
-  PasswordUpdateSchemaType 
+  PasswordUpdateSchemaType,
 } from "@/schemas/account";
 import { saveProfileImage } from "@/lib/blob";
 import { revalidatePath } from "next/cache";
@@ -35,7 +35,7 @@ export async function getCurrentUser() {
 
 export async function updateProfile(data: ProfileUpdateSchemaType) {
   const parsedData = ProfileUpdateSchema.safeParse(data);
-  
+
   if (!parsedData.success) {
     return {
       success: false,
@@ -109,12 +109,13 @@ export async function updateProfile(data: ProfileUpdateSchemaType) {
     }
 
     revalidatePath("/dashboard/account");
-    
+
     return {
       success: true,
-      message: email !== session.user.email 
-        ? "Profile updated successfully. Please check your email to verify your new email address."
-        : "Profile updated successfully",
+      message:
+        email !== session.user.email
+          ? "Profile updated successfully. Please check your email to verify your new email address."
+          : "Profile updated successfully",
       emailChanged: email !== session.user.email,
     };
   } catch (error) {
@@ -128,7 +129,7 @@ export async function updateProfile(data: ProfileUpdateSchemaType) {
 
 export async function updatePassword(data: PasswordUpdateSchemaType) {
   const parsedData = PasswordUpdateSchema.safeParse(data);
-  
+
   if (!parsedData.success) {
     return {
       success: false,
@@ -165,14 +166,14 @@ export async function updatePassword(data: PasswordUpdateSchemaType) {
     }
 
     revalidatePath("/dashboard/account");
-    
+
     return {
       success: true,
       message: "Password updated successfully",
     };
   } catch (error) {
     console.error("Error updating password:", error);
-    
+
     // Handle specific Better Auth errors
     if (error instanceof Error) {
       if (error.message.includes("Invalid password")) {
@@ -182,7 +183,7 @@ export async function updatePassword(data: PasswordUpdateSchemaType) {
         };
       }
     }
-    
+
     return {
       success: false,
       message: "Failed to update password",
@@ -201,7 +202,7 @@ export async function updateProfileImage(formData: FormData) {
     }
 
     const file = formData.get("image") as File;
-    
+
     if (!file || file.size === 0) {
       return {
         success: false,
@@ -238,7 +239,7 @@ export async function updateProfileImage(formData: FormData) {
       .returning();
 
     revalidatePath("/dashboard/account");
-    
+
     return {
       success: true,
       message: "Profile image updated successfully",
@@ -294,12 +295,10 @@ export async function unlinkAccount(accountId: string) {
     }
 
     // Delete the account
-    await db
-      .delete(account)
-      .where(eq(account.id, accountId));
+    await db.delete(account).where(eq(account.id, accountId));
 
     revalidatePath("/dashboard/account");
-    
+
     return {
       success: true,
       message: "Account unlinked successfully",
@@ -353,7 +352,7 @@ export async function resendVerificationEmail() {
 
     // Send verification email using Better Auth
     await auth.api.sendVerificationEmail({
-      body: { 
+      body: {
         email: session.user.email,
         callbackURL: `${configLib.env.url}/verify-email`,
       },
@@ -366,17 +365,18 @@ export async function resendVerificationEmail() {
     };
   } catch (error) {
     console.error("Error sending verification email:", error);
-    
+
     // Handle rate limiting errors
     if (error instanceof Error) {
       if (error.message.includes("rate limit")) {
         return {
           success: false,
-          message: "Too many requests. Please wait a moment before trying again.",
+          message:
+            "Too many requests. Please wait a moment before trying again.",
         };
       }
     }
-    
+
     return {
       success: false,
       message: "Failed to send verification email. Please try again later.",
@@ -392,23 +392,26 @@ export async function verifyEmail(token: string) {
     });
 
     revalidatePath("/dashboard/account");
-    
+
     return {
       success: true,
       message: "Email verified successfully",
     };
   } catch (error) {
     console.error("Error verifying email:", error);
-    
+
     if (error instanceof Error) {
-      if (error.message.includes("invalid") || error.message.includes("expired")) {
+      if (
+        error.message.includes("invalid") ||
+        error.message.includes("expired")
+      ) {
         return {
           success: false,
           message: "Invalid or expired verification token",
         };
       }
     }
-    
+
     return {
       success: false,
       message: "Failed to verify email",

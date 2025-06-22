@@ -28,7 +28,9 @@ export interface PaginatedBooksResponse {
   currentPage: number;
 }
 
-export async function getAdminBooks(options: BookSearchOptions = {}): Promise<PaginatedBooksResponse> {
+export async function getAdminBooks(
+  options: BookSearchOptions = {},
+): Promise<PaginatedBooksResponse> {
   const {
     page = 1,
     limit = 10,
@@ -37,7 +39,7 @@ export async function getAdminBooks(options: BookSearchOptions = {}): Promise<Pa
     availability,
     popularity,
     sortBy = "createdAt",
-    sortOrder = "desc"
+    sortOrder = "desc",
   } = options;
 
   const offset = (page - 1) * limit;
@@ -50,8 +52,8 @@ export async function getAdminBooks(options: BookSearchOptions = {}): Promise<Pa
       or(
         like(books.title, `%${search}%`),
         like(books.author, `%${search}%`),
-        like(books.genre, `%${search}%`)
-      )
+        like(books.genre, `%${search}%`),
+      ),
     );
   }
 
@@ -96,7 +98,7 @@ export async function getAdminBooks(options: BookSearchOptions = {}): Promise<Pa
     .offset(offset);
 
   // Process books with calculated fields
-  const processedBooks: BookWithStats[] = booksWithStats.map(book => {
+  const processedBooks: BookWithStats[] = booksWithStats.map((book) => {
     // Calculate availability status
     let availability: "Available" | "Limited" | "Out of Stock";
     if (book.availableCopies === 0) {
@@ -130,35 +132,39 @@ export async function getAdminBooks(options: BookSearchOptions = {}): Promise<Pa
   let filteredBooks = processedBooks;
 
   if (availability) {
-    filteredBooks = filteredBooks.filter(book => book.availability === availability);
+    filteredBooks = filteredBooks.filter(
+      (book) => book.availability === availability,
+    );
   }
 
   if (popularity) {
-    filteredBooks = filteredBooks.filter(book => book.popularity === popularity);
+    filteredBooks = filteredBooks.filter(
+      (book) => book.popularity === popularity,
+    );
   }
 
   // Apply sorting
   if (sortBy === "borrowCount") {
     filteredBooks.sort((a, b) => {
-      return sortOrder === "desc" 
-        ? b.borrowCount - a.borrowCount 
+      return sortOrder === "desc"
+        ? b.borrowCount - a.borrowCount
         : a.borrowCount - b.borrowCount;
     });
   } else if (sortBy === "availableCopies") {
     filteredBooks.sort((a, b) => {
-      return sortOrder === "desc" 
-        ? b.availableCopies - a.availableCopies 
+      return sortOrder === "desc"
+        ? b.availableCopies - a.availableCopies
         : a.availableCopies - b.availableCopies;
     });
   } else if (sortBy === "title") {
     filteredBooks.sort((a, b) => {
-      return sortOrder === "desc" 
+      return sortOrder === "desc"
         ? b.title.localeCompare(a.title)
         : a.title.localeCompare(b.title);
     });
   } else if (sortBy === "author") {
     filteredBooks.sort((a, b) => {
-      return sortOrder === "desc" 
+      return sortOrder === "desc"
         ? b.author.localeCompare(a.author)
         : a.author.localeCompare(b.author);
     });
@@ -173,9 +179,7 @@ export async function getAdminBooks(options: BookSearchOptions = {}): Promise<Pa
 }
 
 export async function getBookGenres(): Promise<string[]> {
-  const genres = await db
-    .selectDistinct({ genre: books.genre })
-    .from(books);
-  
-  return genres.map(g => g.genre);
+  const genres = await db.selectDistinct({ genre: books.genre }).from(books);
+
+  return genres.map((g) => g.genre);
 }

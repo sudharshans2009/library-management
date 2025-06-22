@@ -7,7 +7,6 @@ import {
   PlusIcon,
   UsersIcon,
   BookOpenIcon,
-  SettingsIcon,
   ClockIcon,
   AlertCircleIcon,
 } from "lucide-react";
@@ -25,28 +24,28 @@ export default function QuickActions() {
             Add New Book
           </Button>
         </Link>
-        
+
         <Link href="/admin/users" className="w-full">
           <Button variant="outline" className="w-full justify-start">
             <UsersIcon className="w-4 h-4 mr-2" />
             Manage Users
           </Button>
         </Link>
-        
+
         <Link href="/admin/records?status=PENDING" className="w-full">
           <Button variant="outline" className="w-full justify-start">
             <ClockIcon className="w-4 h-4 mr-2" />
             Pending Requests
           </Button>
         </Link>
-        
+
         <Link href="/admin/records" className="w-full">
           <Button variant="outline" className="w-full justify-start">
             <BookOpenIcon className="w-4 h-4 mr-2" />
             View All Records
           </Button>
         </Link>
-        
+
         <Link href="/admin/books" className="w-full">
           <Button variant="outline" className="w-full justify-start">
             <AlertCircleIcon className="w-4 h-4 mr-2" />

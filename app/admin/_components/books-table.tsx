@@ -58,18 +58,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { 
-  getAdminBooks, 
-  deleteBook, 
+import {
+  getAdminBooks,
+  deleteBook,
   updateBookCopies,
   exportBooksToCSV,
   getBooksGenres,
   BookWithStats,
-  BookSearchOptions
+  BookSearchOptions,
 } from "@/actions/books";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const columns: ColumnDef<BookWithStats>[] = [
   {
@@ -95,7 +94,7 @@ const columns: ColumnDef<BookWithStats>[] = [
                 className="object-cover"
               />
             ) : (
-              <div 
+              <div
                 className="w-full h-full flex items-center justify-center"
                 style={{ backgroundColor: book.coverColor }}
               >
@@ -105,7 +104,9 @@ const columns: ColumnDef<BookWithStats>[] = [
           </div>
           <div className="space-y-1">
             <div className="font-medium">{book.title}</div>
-            <div className="text-sm text-muted-foreground">by {book.author}</div>
+            <div className="text-sm text-muted-foreground">
+              by {book.author}
+            </div>
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
               <span className="text-xs">{book.rating}</span>
@@ -141,7 +142,8 @@ const columns: ColumnDef<BookWithStats>[] = [
       return (
         <div className="space-y-1">
           <div className="text-sm">
-            <span className="font-medium">{availableCopies}</span> / {totalCopies}
+            <span className="font-medium">{availableCopies}</span> /{" "}
+            {totalCopies}
           </div>
           <div className="text-xs text-muted-foreground">Available / Total</div>
         </div>
@@ -163,18 +165,24 @@ const columns: ColumnDef<BookWithStats>[] = [
       const getAvailabilityStyles = (availability: string) => {
         switch (availability) {
           case "Available":
-            return { variant: "default" as const, className: "bg-green-500 hover:bg-green-600" };
+            return {
+              variant: "default" as const,
+              className: "bg-green-500 hover:bg-green-600",
+            };
           case "Limited":
-            return { variant: "outline" as const, className: "border-yellow-500 text-yellow-700" };
+            return {
+              variant: "outline" as const,
+              className: "border-yellow-500 text-yellow-700",
+            };
           case "Out of Stock":
             return { variant: "destructive" as const };
           default:
             return { variant: "outline" as const };
         }
       };
-      
+
       const styles = getAvailabilityStyles(availability);
-      
+
       return (
         <Badge variant={styles.variant} className={styles.className}>
           {availability}
@@ -197,25 +205,33 @@ const columns: ColumnDef<BookWithStats>[] = [
       const getPopularityStyles = (popularity: string) => {
         switch (popularity) {
           case "High":
-            return { variant: "default" as const, className: "bg-purple-500 hover:bg-purple-600" };
+            return {
+              variant: "default" as const,
+              className: "bg-purple-500 hover:bg-purple-600",
+            };
           case "Medium":
-            return { variant: "default" as const, className: "bg-blue-500 hover:bg-blue-600" };
+            return {
+              variant: "default" as const,
+              className: "bg-blue-500 hover:bg-blue-600",
+            };
           case "Low":
             return { variant: "outline" as const };
           default:
             return { variant: "outline" as const };
         }
       };
-      
+
       const styles = getPopularityStyles(popularity);
-      
+
       return (
         <div className="space-y-1">
           <Badge variant={styles.variant} className={styles.className}>
             <TrendingUpIcon className="w-3 h-3 mr-1" />
             {popularity}
           </Badge>
-          <div className="text-xs text-muted-foreground">{borrowCount} borrows</div>
+          <div className="text-xs text-muted-foreground">
+            {borrowCount} borrows
+          </div>
         </div>
       );
     },
@@ -230,7 +246,9 @@ const columns: ColumnDef<BookWithStats>[] = [
           <div className="text-sm">
             <span className="font-medium">{activeBorrows}</span> active
           </div>
-          <div className="text-xs text-muted-foreground">{borrowCount} total</div>
+          <div className="text-xs text-muted-foreground">
+            {borrowCount} total
+          </div>
         </div>
       );
     },
@@ -245,7 +263,7 @@ const columns: ColumnDef<BookWithStats>[] = [
       const { createdAt } = row.original;
       return (
         <div className="text-sm">
-          {createdAt ? new Date(createdAt).toLocaleDateString() : 'N/A'}
+          {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}
         </div>
       );
     },
@@ -255,7 +273,7 @@ const columns: ColumnDef<BookWithStats>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const book = row.original;
-      
+
       return <BookActionsDropdown book={book} />;
     },
   },
@@ -263,11 +281,10 @@ const columns: ColumnDef<BookWithStats>[] = [
 
 function BookActionsDropdown({ book }: { book: BookWithStats }) {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [totalCopies, setTotalCopies] = useState(book.totalCopies);
   const [availableCopies, setAvailableCopies] = useState(book.availableCopies);
-  
+
   const deleteMutation = useMutation({
     mutationFn: () => deleteBook(book.id),
     onSuccess: (result) => {
@@ -279,7 +296,7 @@ function BookActionsDropdown({ book }: { book: BookWithStats }) {
       }
     },
   });
-  
+
   const updateMutation = useMutation({
     mutationFn: () => updateBookCopies(book.id, totalCopies, availableCopies),
     onSuccess: (result) => {
@@ -305,37 +322,43 @@ function BookActionsDropdown({ book }: { book: BookWithStats }) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          
+
           <DropdownMenuItem asChild>
-            <Link href={`/admin/books/${book.id}`} className="flex items-center">
+            <Link
+              href={`/admin/books/${book.id}`}
+              className="flex items-center"
+            >
               <EyeIcon className="mr-2 h-4 w-4" />
               View Details
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem asChild>
-            <Link href={`/admin/books/${book.id}/edit`} className="flex items-center">
+            <Link
+              href={`/admin/books/${book.id}/edit`}
+              className="flex items-center"
+            >
               <EditIcon className="mr-2 h-4 w-4" />
               Edit Book
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
             <EditIcon className="mr-2 h-4 w-4" />
             Edit Copies
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          
+
           <DropdownMenuItem asChild>
             <Link href={`/books/${book.id}`} className="flex items-center">
               <ExternalLinkIcon className="mr-2 h-4 w-4" />
               View Public Page
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuSeparator />
-          
+
           <DropdownMenuItem
             onClick={() => deleteMutation.mutate()}
             disabled={deleteMutation.isPending || book.activeBorrows > 0}
@@ -370,18 +393,30 @@ function BookActionsDropdown({ book }: { book: BookWithStats }) {
               <Input
                 type="number"
                 value={availableCopies}
-                onChange={(e) => setAvailableCopies(parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  setAvailableCopies(parseInt(e.target.value) || 0)
+                }
                 min="0"
                 max={totalCopies}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+            <Button
+              onClick={() => updateMutation.mutate()}
+              disabled={updateMutation.isPending}
+            >
+              {updateMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Update"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -479,28 +514,45 @@ export default function BooksTable() {
   const handleExportCSV = (data: any[]) => {
     const csvContent = [
       // CSV Headers
-      ["Title", "Author", "Genre", "Total Copies", "Available Copies", "Borrow Count", "Active Borrows", "Popularity", "Availability", "Rating", "Created At"].join(","),
+      [
+        "Title",
+        "Author",
+        "Genre",
+        "Total Copies",
+        "Available Copies",
+        "Borrow Count",
+        "Active Borrows",
+        "Popularity",
+        "Availability",
+        "Rating",
+        "Created At",
+      ].join(","),
       // CSV Data
-      ...data.map(row => [
-        `"${row.title}"`,
-        `"${row.author}"`,
-        `"${row.genre}"`,
-        `"${row.totalCopies}"`,
-        `"${row.availableCopies}"`,
-        `"${row.borrowCount}"`,
-        `"${row.activeBorrows}"`,
-        `"${row.popularity}"`,
-        `"${row.availability}"`,
-        `"${row.rating}"`,
-        `"${row.createdAt}"`
-      ].join(","))
+      ...data.map((row) =>
+        [
+          `"${row.title}"`,
+          `"${row.author}"`,
+          `"${row.genre}"`,
+          `"${row.totalCopies}"`,
+          `"${row.availableCopies}"`,
+          `"${row.borrowCount}"`,
+          `"${row.activeBorrows}"`,
+          `"${row.popularity}"`,
+          `"${row.availability}"`,
+          `"${row.rating}"`,
+          `"${row.createdAt}"`,
+        ].join(",")
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `books_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute(
+      "download",
+      `books_export_${new Date().toISOString().split("T")[0]}.csv`
+    );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -509,9 +561,17 @@ export default function BooksTable() {
 
   if (query.isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading books...</span>
+      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto px-5">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
+            <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+          </div>
+          <p className="text-lg font-medium">Loading your books...</p>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we fetch your information
+          </p>
+        </div>
       </div>
     );
   }
@@ -537,13 +597,16 @@ export default function BooksTable() {
             className="pl-8"
           />
         </div>
-        
+
         <div className="flex gap-2 flex-wrap">
           {table.getColumn("genre") && genresQuery.data?.success && (
             <DataTableFacetedFilter
               title="Genre"
               column={table.getColumn("genre")}
-              options={genresQuery.data.data.map(genre => ({ label: genre, value: genre }))}
+              options={genresQuery.data.data.map((genre) => ({
+                label: genre,
+                value: genre,
+              }))}
             />
           )}
           {table.getColumn("availability") && (
@@ -576,11 +639,12 @@ export default function BooksTable() {
         <div className="text-sm text-muted-foreground">
           {query.data?.data && (
             <>
-              Showing {query.data.data.books.length} of {query.data.data.totalCount} books
+              Showing {query.data.data.books.length} of{" "}
+              {query.data.data.totalCount} books
             </>
           )}
         </div>
-        
+
         <div className="flex gap-2">
           <Link href="/admin/books/new">
             <Button variant="outline" size="sm">
@@ -588,7 +652,7 @@ export default function BooksTable() {
               Add Book
             </Button>
           </Link>
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -631,7 +695,9 @@ export default function BooksTable() {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="hover:bg-muted/50 cursor-pointer"
-                  onClick={() => window.open(`/admin/books/${row.original.id}`, '_blank')}
+                  onClick={() =>
+                    window.open(`/admin/books/${row.original.id}`, "_blank")
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -662,7 +728,7 @@ export default function BooksTable() {
         <div className="flex-1 text-sm text-muted-foreground">
           {query.data?.data && (
             <>
-              Showing {(pagination.pageIndex * pagination.pageSize) + 1} to{" "}
+              Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
               {Math.min(
                 (pagination.pageIndex + 1) * pagination.pageSize,
                 query.data.data.totalCount

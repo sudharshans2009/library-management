@@ -3,14 +3,30 @@
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProfileUpdateSchema, ProfileUpdateSchemaType } from "@/schemas/account";
+import {
+  ProfileUpdateSchema,
+  ProfileUpdateSchemaType,
+} from "@/schemas/account";
 import { updateProfile, updateProfileImage } from "@/actions/account";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { toast } from "sonner";
 import { Camera, Upload, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
@@ -104,21 +120,22 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             Profile Picture
           </CardTitle>
           <CardDescription>
-            Update your profile picture. Recommended size: 400x400px. Max file size: 5MB.
+            Update your profile picture. Recommended size: 400x400px. Max file
+            size: 5MB.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-6">
             <Avatar className="w-24 h-24">
-              <AvatarImage 
-                src={imagePreview || user.image || ""} 
-                alt={user.name || "Profile"} 
+              <AvatarImage
+                src={imagePreview || user.image || ""}
+                alt={user.name || "Profile"}
               />
               <AvatarFallback className="text-2xl">
                 {user.name?.charAt(0)?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
-            
+
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Button
@@ -129,7 +146,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                   <Upload className="w-4 h-4 mr-2" />
                   Choose Image
                 </Button>
-                
+
                 {imagePreview && (
                   <Button
                     onClick={handleImageUpload}
@@ -144,7 +161,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                   </Button>
                 )}
               </div>
-              
+
               <Input
                 ref={fileInputRef}
                 type="file"
@@ -152,7 +169,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                 onChange={handleImageChange}
                 className="hidden"
               />
-              
+
               <p className="text-sm text-muted-foreground">
                 JPEG, PNG, or WebP. Max file size 5MB.
               </p>
@@ -180,9 +197,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                     <FormItem>
                       <FormLabel>Display Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter your display name" 
-                          {...field} 
+                        <Input
+                          placeholder="Enter your display name"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -197,10 +214,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter your full name" 
-                          {...field} 
-                        />
+                        <Input placeholder="Enter your full name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -215,10 +229,10 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="email"
-                        placeholder="Enter your email address" 
-                        {...field} 
+                        placeholder="Enter your email address"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -226,8 +240,8 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                 )}
               />
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={updateProfileMutation.isPending}
                 className="w-full md:w-auto"
               >

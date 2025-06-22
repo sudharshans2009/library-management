@@ -150,7 +150,7 @@ export async function suspendUser(userId: string) {
 
 export async function changeUserRole(
   userId: string,
-  role: "USER" | "ADMIN" | "MODERATOR" | "GUEST"
+  role: "USER" | "ADMIN" | "MODERATOR" | "GUEST",
 ) {
   await requireAdmin();
 
@@ -222,7 +222,7 @@ export async function exportUsersToCSV(filters: UserSearchOptions = {}) {
         status: config.status,
         createdAt: user.createdAt.toISOString(),
         lastActiveAt: config.lastActiveAt,
-      })
+      }),
     );
 
     return {

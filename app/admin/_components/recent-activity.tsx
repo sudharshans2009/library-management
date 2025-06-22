@@ -6,7 +6,6 @@ import {
   BookIcon,
   UserIcon,
   CheckCircleIcon,
-  ClockIcon,
   ActivityIcon,
 } from "lucide-react";
 
@@ -24,7 +23,7 @@ interface RecentActivityProps {
 }
 
 export default function RecentActivity({ activities }: RecentActivityProps) {
-  const getActivityIcon = (type: Activity['type']) => {
+  const getActivityIcon = (type: Activity["type"]) => {
     switch (type) {
       case "borrow":
         return <BookIcon className="w-4 h-4 text-blue-500" />;
@@ -39,16 +38,35 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
     }
   };
 
-  const getActivityBadge = (type: Activity['type']) => {
+  const getActivityBadge = (type: Activity["type"]) => {
     switch (type) {
       case "borrow":
-        return <Badge variant="outline" className="text-blue-700 border-blue-200">Borrow</Badge>;
+        return (
+          <Badge variant="outline" className="text-blue-700 border-blue-200">
+            Borrow
+          </Badge>
+        );
       case "return":
-        return <Badge variant="outline" className="text-green-700 border-green-200">Return</Badge>;
+        return (
+          <Badge variant="outline" className="text-green-700 border-green-200">
+            Return
+          </Badge>
+        );
       case "user_signup":
-        return <Badge variant="outline" className="text-purple-700 border-purple-200">Signup</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="text-purple-700 border-purple-200"
+          >
+            Signup
+          </Badge>
+        );
       case "user_approval":
-        return <Badge variant="outline" className="text-green-700 border-green-200">Approval</Badge>;
+        return (
+          <Badge variant="outline" className="text-green-700 border-green-200">
+            Approval
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Activity</Badge>;
     }

@@ -31,7 +31,7 @@ export interface PaginatedUsers {
 
 // Get users with pagination and filtering (replaces Payload's findMany)
 export async function getUsersWithPagination(
-  options: UserSearchOptions = {}
+  options: UserSearchOptions = {},
 ): Promise<PaginatedUsers> {
   const {
     search,
@@ -56,8 +56,8 @@ export async function getUsersWithPagination(
         ilike(user.name, `%${search}%`),
         ilike(user.email, `%${search}%`),
         ilike(config.fullName, `%${search}%`),
-        ilike(config.rollNo, `%${search}%`)
-      )
+        ilike(config.rollNo, `%${search}%`),
+      ),
     );
   }
 
@@ -94,7 +94,7 @@ export async function getUsersWithPagination(
   } else {
     sortColumn = config[sortBy];
   }
-  
+
   const orderFn = sortOrder === "desc" ? desc : asc;
 
   // Get users with pagination
@@ -121,7 +121,9 @@ export async function getUsersWithPagination(
 }
 
 // Get user by ID with config
-export async function getUserById(userId: string): Promise<UserWithConfig | null> {
+export async function getUserById(
+  userId: string,
+): Promise<UserWithConfig | null> {
   const [result] = await db
     .select({
       user: user,
@@ -136,7 +138,9 @@ export async function getUserById(userId: string): Promise<UserWithConfig | null
 }
 
 // Get user by email with config
-export async function getUserByEmail(email: string): Promise<UserWithConfig | null> {
+export async function getUserByEmail(
+  email: string,
+): Promise<UserWithConfig | null> {
   const [result] = await db
     .select({
       user: user,
@@ -153,7 +157,7 @@ export async function getUserByEmail(email: string): Promise<UserWithConfig | nu
 // Update user status
 export async function updateUserStatus(
   userId: string,
-  status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED"
+  status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED",
 ): Promise<Config | null> {
   const [updatedConfig] = await db
     .update(config)
@@ -170,7 +174,7 @@ export async function updateUserStatus(
 // Update user role
 export async function updateUserRole(
   userId: string,
-  role: "USER" | "ADMIN" | "MODERATOR" | "GUEST"
+  role: "USER" | "ADMIN" | "MODERATOR" | "GUEST",
 ): Promise<Config | null> {
   const [updatedConfig] = await db
     .update(config)
@@ -186,9 +190,7 @@ export async function updateUserRole(
 
 // Get users statistics
 export async function getUserStats() {
-  const [totalUsers] = await db
-    .select({ count: count() })
-    .from(config);
+  const [totalUsers] = await db.select({ count: count() }).from(config);
 
   const [pendingUsers] = await db
     .select({ count: count() })
@@ -216,7 +218,7 @@ export async function getUserStats() {
 // Search users (for quick search functionality)
 export async function searchUsers(
   query: string,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<UserWithConfig[]> {
   const usersData = await db
     .select({
@@ -230,8 +232,8 @@ export async function searchUsers(
         ilike(user.name, `%${query}%`),
         ilike(user.email, `%${query}%`),
         ilike(config.fullName, `%${query}%`),
-        ilike(config.rollNo, `%${query}%`)
-      )
+        ilike(config.rollNo, `%${query}%`),
+      ),
     )
     .orderBy(desc(user.createdAt))
     .limit(limit);
@@ -242,7 +244,7 @@ export async function searchUsers(
 // Get users by class
 export async function getUsersByClass(
   className: string,
-  options: Omit<UserSearchOptions, 'class'> = {}
+  options: Omit<UserSearchOptions, "class"> = {},
 ): Promise<PaginatedUsers> {
   return getUsersWithPagination({
     ...options,
@@ -253,7 +255,7 @@ export async function getUsersByClass(
 // Get users by status
 export async function getUsersByStatus(
   status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED",
-  options: Omit<UserSearchOptions, 'status'> = {}
+  options: Omit<UserSearchOptions, "status"> = {},
 ): Promise<PaginatedUsers> {
   return getUsersWithPagination({
     ...options,
@@ -263,7 +265,7 @@ export async function getUsersByStatus(
 
 // Get pending users (for admin approval)
 export async function getPendingUsers(
-  options: Omit<UserSearchOptions, 'status'> = {}
+  options: Omit<UserSearchOptions, "status"> = {},
 ): Promise<PaginatedUsers> {
   return getUsersWithPagination({
     ...options,
