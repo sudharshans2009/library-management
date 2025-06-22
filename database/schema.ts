@@ -10,22 +10,72 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+
+export type User = InferSelectModel<typeof user>;
+export type NewUser = InferInsertModel<typeof user>;
+
+export type Session = InferSelectModel<typeof session>;
+export type NewSession = InferInsertModel<typeof session>;
+
+export type Account = InferSelectModel<typeof account>;
+export type NewAccount = InferInsertModel<typeof account>;
+
+export type Verification = InferSelectModel<typeof verification>;
+export type NewVerification = InferInsertModel<typeof verification>;
+
+export type Config = InferSelectModel<typeof config>;
+export type NewConfig = InferInsertModel<typeof config>;
+
+export type Book = InferSelectModel<typeof books>;
+export type NewBook = InferInsertModel<typeof books>;
+
+export type BorrowRecord = InferSelectModel<typeof borrowRecords>;
+export type NewBorrowRecord = InferInsertModel<typeof borrowRecords>;
+
+export type StatusEnum = typeof STATUS_ENUM.enumValues[number];
+export type RoleEnum = typeof ROLE_ENUM.enumValues[number];
+export type BorrowStatusEnum = typeof BORROW_STATUS_ENUM.enumValues[number];
+export type ClassEnum = typeof CLASS_ENUM.enumValues[number];
+export type SectionEnum = typeof SECTION_ENUM.enumValues[number];
+
 export const STATUS_ENUM = pgEnum("status", [
   "PENDING",
   "APPROVED",
   "REJECTED",
   "SUSPENDED",
 ]);
+
 export const ROLE_ENUM = pgEnum("role", [
   "USER",
   "ADMIN",
   "MODERATOR",
   "GUEST",
 ]);
+
 export const BORROW_STATUS_ENUM = pgEnum("borrow_status", [
   "PENDING",
   "BORROWED",
   "RETURNED",
+]);
+
+export const CLASS_ENUM = pgEnum("class", [
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "Teacher"
+]);
+
+export const SECTION_ENUM = pgEnum("section", [
+  "A",
+  "B",
+  "C",
+  "D",
+  "N/A"
 ]);
 
 // Better Auth tables
@@ -85,12 +135,15 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
-// Extended user table for your application
+// Extended user configuration table for your application
 export const config = pgTable("config", {
   id: text("id").notNull().primaryKey(),
   fullName: varchar("full_name", { length: 255 }).notNull(),
   status: STATUS_ENUM("status").default("PENDING"),
   role: ROLE_ENUM("role").default("USER"),
+  class: CLASS_ENUM("class").notNull(),
+  section: SECTION_ENUM("section").notNull(),
+  rollNo: varchar("roll_no", { length: 10 }).notNull(),
   lastActiveAt: date("last_active_at").defaultNow(),
   userId: text("user_id")
     .notNull()

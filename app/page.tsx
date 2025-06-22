@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Book } from "lucide-react";
 import { Background } from "@/components/background";
+import BooksList from "@/components/book-list";
 // import BooksList from "@/components/book-list";
 
 interface HomePageProps {
@@ -60,12 +61,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         </section>
 
-        {/* <BooksList
+        <BooksList
           searchParams={await searchParams}
           showTitle={true}
           showDescription={true}
           className="pt-24"
-        /> */}
+        />
       </div>
     </main>
   );

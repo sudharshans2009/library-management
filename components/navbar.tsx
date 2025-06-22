@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { ThemeSwitcher } from "./theme-switcher";
 import { authClient } from "@/lib/auth/client";
+import { siteLinks } from "@/constants";
 const { useSession } = authClient;
 
 export default function Navbar() {
@@ -95,28 +96,7 @@ export default function Navbar() {
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className="flex flex-col gap-6">
-                  {[
-                    {
-                      label: "Home",
-                      href: "/",
-                      icon: Home,
-                    },
-                    {
-                      label: "Dashboard",
-                      href: "/dashboard",
-                      icon: LayoutDashboard,
-                    },
-                    {
-                      label: "Books",
-                      href: "/books",
-                      icon: BookOpen,
-                    },
-                    {
-                      label: "About",
-                      href: "/about",
-                      icon: UserCircle,
-                    },
-                  ].map((item) => (
+                  {siteLinks.map((item) => (
                     <DrawerClose key={item.label} asChild>
                       <Link
                         href={item.href}

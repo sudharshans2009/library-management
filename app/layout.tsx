@@ -6,6 +6,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import { QueryProvider } from "@/components/providers/query";
 import { Toaster } from "@/components/ui/sonner";
+import Footer from "@/components/footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default async function RootLayout({
           <ThemeProvider>
             <Navbar />
             {children}
+            <Footer />
             <Toaster position="bottom-right" richColors />
           </ThemeProvider>
         </QueryProvider>

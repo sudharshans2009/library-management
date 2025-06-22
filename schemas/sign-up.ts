@@ -6,7 +6,7 @@ export const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   passwordConfirmation: z.string().min(8, "Password confirmation must be at least 8 characters"),
-  image: z.instanceof(File).optional().or(z.literal("")),
+  image: z.instanceof(File).optional(),
 }).refine((data) => data.password === data.passwordConfirmation, {
   message: "Passwords don't match",
   path: ["passwordConfirmation"],
