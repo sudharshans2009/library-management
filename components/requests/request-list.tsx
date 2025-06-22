@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // components/requests/request-list.tsx
 "use client";
 
@@ -48,7 +49,7 @@ export function RequestList({
   searchOptions = {},
   showUserInfo = false,
 }: RequestListProps) {
-  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
+  const [_selectedRequestId, setSelectedRequestId] = useState<string | null>(
     null
   );
   const queryClient = useQueryClient();

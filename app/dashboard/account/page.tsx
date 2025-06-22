@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Background } from "@/components/background";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Shield, Settings as SettingsIcon, Bell, Clock } from "lucide-react";
+import { User, Shield, Settings as SettingsIcon, Bell } from "lucide-react";
 import { ProfileSettings } from "@/components/account/profile-settings";
 import { SecuritySettings } from "@/components/account/security-settings";
 import { useSession } from "@/lib/auth/client";

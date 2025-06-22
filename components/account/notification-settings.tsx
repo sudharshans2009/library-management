@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/account/notification-settings.tsx
 "use client";
@@ -7,13 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Bell, Mail, Smartphone, Calendar, BookOpen } from "lucide-react";
+import { Bell, Mail, Calendar, BookOpen } from "lucide-react";
 
 interface NotificationSettingsProps {
   user: any;
 }
 
-export function NotificationSettings({ user }: NotificationSettingsProps) {
+export function NotificationSettings({ user: _user }: NotificationSettingsProps) {
   return (
     <div className="space-y-6">
       <Card>

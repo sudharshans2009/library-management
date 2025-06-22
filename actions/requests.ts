@@ -69,7 +69,7 @@ export async function createRequest(data: CreateRequestSchemaType): Promise<{
     // Validate input
     const validatedData = CreateRequestSchema.parse(data);
 
-    const { session, config: userConfig } = await checkAuthAndGetConfig();
+    const { session } = await checkAuthAndGetConfig();
 
     // Verify user owns the borrow record
     const [borrowRecord] = await db

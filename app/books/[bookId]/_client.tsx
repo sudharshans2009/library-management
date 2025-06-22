@@ -3,21 +3,18 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  Plus,
   Check,
   Clock,
   AlertCircle,
   BookOpen,
-  Calendar,
   Users,
   Loader2,
 } from "lucide-react";
-import { borrowBook, getBookById } from "@/actions/books";
-import { auth } from "@/lib/auth/main";
+import { borrowBook } from "@/actions/books";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";

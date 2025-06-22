@@ -9,7 +9,6 @@ import { useMutation } from "@tanstack/react-query";
 
 import { signInSchema, SignInFormData } from "@/schemas/sign-in";
 import { authClient } from "@/lib/auth/client";
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -75,7 +74,7 @@ export default function SignIn() {
   async function handleGoogleSignIn() {
     try {
       setSocialLoading(true);
-      const { data, error } = await authClient.signIn.social(
+      await authClient.signIn.social(
         {
           provider: "google",
           callbackURL: "/dashboard",
@@ -100,7 +99,7 @@ export default function SignIn() {
   async function handleGithubSignIn() {
     try {
       setSocialLoading(true);
-      const { data, error } = await authClient.signIn.social(
+      await authClient.signIn.social(
         {
           provider: "github",
           callbackURL: "/dashboard",

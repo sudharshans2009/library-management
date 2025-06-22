@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Form,
@@ -30,8 +29,6 @@ import {
 import { toast } from "sonner";
 import { Camera, Upload, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
-
 interface ProfileSettingsProps {
   user: {
     id: string;

@@ -5,16 +5,13 @@ import {
   BookIcon,
   UsersIcon,
   ClockIcon,
-  StarIcon,
   ArrowRightIcon,
   FileText,
-  CheckCircle,
   Shield,
 } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";

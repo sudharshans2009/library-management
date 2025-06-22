@@ -7,11 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen,
   Filter,
-  Search,
   TrendingUp,
   Star,
   Users,
-  Clock
 } from "lucide-react";
 
 interface BooksPageProps {

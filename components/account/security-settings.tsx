@@ -147,6 +147,7 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
       toast.success(`${provider} account linked successfully`);
       refetchAccounts();
     } catch (error) {
+      console.error("Failed to link account:", error);
       toast.error(`Failed to link ${provider} account`);
     }
   };

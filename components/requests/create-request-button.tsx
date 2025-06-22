@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CreateRequestForm } from "@/components/forms/create-request";
-import { Plus, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 interface CreateRequestButtonProps {
   borrowRecordId: string;

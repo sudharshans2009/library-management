@@ -8,11 +8,9 @@ import {
   AlertCircle,
   CheckCircle,
   Star,
-  Plus,
   FileText,
 } from "lucide-react";
 import { Background } from "@/components/background";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import BooksList from "@/components/book-list";
 import { getBorrowRecordById } from "@/actions/records";

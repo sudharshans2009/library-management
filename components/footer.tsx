@@ -11,7 +11,6 @@ import {
   Github,
   FileText,
   MessageSquare,
-  Icon,
 } from "lucide-react";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";

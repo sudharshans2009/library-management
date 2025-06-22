@@ -7,7 +7,6 @@ import {
   ClockIcon,
   TrendingUpIcon,
   AlertCircleIcon,
-  CheckCircleIcon,
   EyeIcon,
   CalendarIcon,
   MessageSquareIcon,
@@ -20,7 +19,6 @@ import { redirect } from "next/navigation";
 import { getUserBorrowRecords } from "@/actions/records";
 import { getRequests } from "@/actions/requests";
 import { Background } from "@/components/background";
-import BooksList from "@/components/book-list";
 
 async function DashboardContent() {
   const session = await auth.api.getSession({

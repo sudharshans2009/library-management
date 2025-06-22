@@ -26,7 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -40,7 +39,6 @@ import {
   REQUEST_REASONS,
   type CreateRequestSchemaType,
 } from "@/schemas/request";
-import type { RequestTypeEnum } from "@/database/schema";
 import { createRequest, getUserBorrowRecords } from "@/actions/requests";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
