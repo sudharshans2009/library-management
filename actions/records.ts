@@ -178,7 +178,7 @@ export async function approveRecord(recordId: string): Promise<{
     dueDate.setDate(dueDate.getDate() + 14);
 
     // Execute approval in transaction
-    await db.transaction(async (tx) => {
+    await db.transaction(async () => {
       // Update borrow record status and due date
       await updateBorrowRecordStatus(recordId, "BORROWED");
 
@@ -257,7 +257,7 @@ export async function returnRecord(recordId: string): Promise<{
     const returnDate = new Date().toISOString().split("T")[0];
 
     // Execute return in transaction
-    await db.transaction(async (tx) => {
+    await db.transaction(async () => {
       // Update record with return date and status
       await updateBorrowRecordStatus(recordId, "RETURNED", returnDate);
 

@@ -56,6 +56,7 @@ export default function SignUp() {
         try {
           imageUrl = await uploadImageAction(formData.image);
         } catch (error) {
+					console.error("Image upload failed:", error);
           throw new Error("Failed to upload image");
         }
       }
@@ -218,7 +219,7 @@ export default function SignUp() {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Profile Image (optional)</FormLabel>
                     <div className="flex items-end gap-4">
