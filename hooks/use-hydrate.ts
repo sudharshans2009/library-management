@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,7 +7,6 @@ import { useEffect, useState } from "react";
 export function useHydrate<T>(
   useFn: (value: unknown) => unknown,
   [defaultState, defaultValue]: unknown[] = [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rawDepsFn: (value: any) => any[],
 ): T {
   const [value, setValue] = useState(defaultState || null);
@@ -22,7 +23,6 @@ export function useHydrate<T>(
 
   useEffect(() => {
     setValue(fn || null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return (value || defaultState) as T;

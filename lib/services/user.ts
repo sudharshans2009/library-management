@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/database/drizzle";
 import { user, config, User, Config } from "@/database/schema";
 import { eq, count, and, or, ilike, desc, asc } from "drizzle-orm";

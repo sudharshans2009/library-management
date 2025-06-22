@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 interface BooksListProps {
   searchParams: {
     page?: string;
+    genre?: string;
+    exclude?: string;
   };
   showTitle?: boolean;
   showDescription?: boolean;

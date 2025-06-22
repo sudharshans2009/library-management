@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dotenv from "dotenv";
 import path from "path";
 import { existsSync } from "fs";
@@ -135,7 +136,6 @@ async function seedBooksAdvanced() {
       current: ''
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const failedBooks: Array<{ book: any; error: string }> = [];
     
     console.log("🔌 Testing database connection...");

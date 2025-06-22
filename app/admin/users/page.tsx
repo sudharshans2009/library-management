@@ -1,11 +1,16 @@
 import UsersTable from "../_components/users-table";
 
-export default function AdminPage() {
+export default function AdminRecordsPage() {
   return (
     <main className="relative w-full h-full px-5 z-10">
-      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto min-h-screen">
-        <h1 className="text-2xl font-bold">Admin Page</h1>
-        <div className="text-lg w-full text-muted-foreground mt-4">
+      <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Users</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage all the users using the library
+          </p>
+        </div>
+        <div className="flex-1">
           <UsersTable />
         </div>
       </div>

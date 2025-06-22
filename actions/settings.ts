@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { UserConfigSchema, UserConfigSchemaType } from "@/schemas/config";
@@ -167,12 +168,10 @@ export async function getUsersWithPagination(options: {
     }
 
     if (userClass) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       whereConditions.push(eq(config.class, userClass as any));
     }
 
     if (section) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       whereConditions.push(eq(config.section, section as any));
     }
 
