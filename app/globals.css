@@ -135,6 +135,11 @@
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
+
+  [data-vaul-drawer]:not([data-vaul-custom-container=true])::after {
+    position: static !important;
+  }
+
   * {
     ::-webkit-scrollbar {
       width: 2px;

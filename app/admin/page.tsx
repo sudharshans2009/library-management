@@ -19,6 +19,7 @@ import DashboardChart from "./_components/dashboard-chart";
 import RecentActivity from "./_components/recent-activity";
 import QuickActions from "./_components/quick-actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 async function DashboardContent() {
   const stats = await getDashboardStats();
@@ -94,6 +95,7 @@ async function DashboardContent() {
         </Card>
       </div>
 
+      {/* Rest of the dashboard content... */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Charts and Analytics */}
         <div className="lg:col-span-2 space-y-6">
@@ -278,20 +280,32 @@ function DashboardSkeleton() {
 
 export default function AdminPage() {
   return (
-    <main className="relative w-full h-full px-5 z-10">
-      <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
+    <div className="flex flex-col">
+      {/* Desktop Sidebar Toggle */}
+      <div className="hidden md:flex items-center gap-2 p-4 border-b">
+        <SidebarTrigger />
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
             Overview of your library management system
           </p>
         </div>
+      </div>
 
+      {/* Mobile Header is handled by AdminMobileNav */}
+      <div className="md:hidden p-4 border-b">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
+          Overview of your library system
+        </p>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-4 md:p-6">
         <Suspense fallback={<DashboardSkeleton />}>
           <DashboardContent />
         </Suspense>
       </div>
-    </main>
+    </div>
   );
 }

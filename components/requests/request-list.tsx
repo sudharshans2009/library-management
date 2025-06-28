@@ -50,7 +50,7 @@ export function RequestList({
   showUserInfo = false,
 }: RequestListProps) {
   const [_selectedRequestId, setSelectedRequestId] = useState<string | null>(
-    null
+    null,
   );
   const queryClient = useQueryClient();
 

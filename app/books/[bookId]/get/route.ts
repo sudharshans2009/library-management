@@ -2,13 +2,13 @@ import { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/database/drizzle";
 import { config, books, borrowRecords } from "@/database/schema";
-import { eq, and  } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ bookId: string }> }
+  { params }: { params: Promise<{ bookId: string }> },
 ) {
   try {
     // 1. Initial Validation & Setup
@@ -25,12 +25,12 @@ export async function POST(
     if (!session) {
       return new Response(
         JSON.stringify({
-          redirect: "/sign-in"
+          redirect: "/sign-in",
         }),
         {
           status: 401,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -46,12 +46,12 @@ export async function POST(
     if (!dbUserConfig) {
       return new Response(
         JSON.stringify({
-          redirect: "/setup"
+          redirect: "/setup",
         }),
         {
           status: 401,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -68,7 +68,7 @@ export async function POST(
         {
           status: 403,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -84,7 +84,7 @@ export async function POST(
         {
           status: 403,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(
         {
           status: 403,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -128,7 +128,7 @@ export async function POST(
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -139,13 +139,13 @@ export async function POST(
       .where(
         and(
           eq(borrowRecords.userId, currentUser.id),
-          eq(borrowRecords.bookId, bookId)
-        )
+          eq(borrowRecords.bookId, bookId),
+        ),
       );
 
     // Check for active borrows (user already has this book)
     const activeBorrow = userBorrowHistory.find((borrow) =>
-      ["PENDING", "BORROWED"].includes(borrow.status)
+      ["PENDING", "BORROWED"].includes(borrow.status),
     );
 
     if (activeBorrow) {
@@ -160,13 +160,13 @@ export async function POST(
         {
           status: 409,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
     // Check for re-borrowing confirmation
     const returnedBorrow = userBorrowHistory.find(
-      (borrow) => borrow.status === "RETURNED"
+      (borrow) => borrow.status === "RETURNED",
     );
 
     if (returnedBorrow) {
@@ -186,7 +186,7 @@ export async function POST(
           {
             status: 409,
             headers: { "Content-Type": "application/json" },
-          }
+          },
         );
       }
     }
@@ -229,7 +229,7 @@ export async function POST(
       {
         status: 201,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("Borrow error:", error);
@@ -241,7 +241,7 @@ export async function POST(
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }
@@ -259,6 +259,6 @@ export async function GET() {
     }),
     {
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
 }

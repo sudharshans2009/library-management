@@ -471,7 +471,7 @@ export default function UsersTable() {
           `"${row.status}"`,
           `"${row.createdAt}"`,
           `"${row.lastActiveAt || "N/A"}"`,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -481,7 +481,7 @@ export default function UsersTable() {
     link.setAttribute("href", url);
     link.setAttribute(
       "download",
-      `users_export_${new Date().toISOString().split("T")[0]}.csv`
+      `users_export_${new Date().toISOString().split("T")[0]}.csv`,
     );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
@@ -600,7 +600,7 @@ export default function UsersTable() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -618,7 +618,7 @@ export default function UsersTable() {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -646,7 +646,7 @@ export default function UsersTable() {
               Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
               {Math.min(
                 (pagination.pageIndex + 1) * pagination.pageSize,
-                query.data.data.totalCount
+                query.data.data.totalCount,
               )}{" "}
               of {query.data.data.totalCount} users
             </>

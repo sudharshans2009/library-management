@@ -29,9 +29,23 @@ export const AdminResponseSchema = z.object({
     .max(500, "Response too long"),
 });
 
+export const AdminResponseWithActionSchema = z.object({
+  requestId: z.string().uuid("Invalid request ID"),
+  status: z.enum(["APPROVED", "REJECTED"]),
+  adminResponse: z
+    .string()
+    .min(1, "Admin response is required")
+    .max(500, "Response too long"),
+  // Optional data for specific actions
+  actionData: z.object({
+    newDueDate: z.string().optional(), // For CHANGE_DUE_DATE requests
+  }).optional(),
+});
+
 export type CreateRequestSchemaType = z.infer<typeof CreateRequestSchema>;
 export type RescindRequestSchemaType = z.infer<typeof RescindRequestSchema>;
 export type AdminResponseSchemaType = z.infer<typeof AdminResponseSchema>;
+export type AdminResponseWithActionSchemaType = z.infer<typeof AdminResponseWithActionSchema>;
 
 // Predefined reasons for each request type
 export const REQUEST_REASONS = {

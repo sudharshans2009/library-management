@@ -2,12 +2,14 @@
 import { Suspense } from "react";
 import { AdminRequestList } from "@/components/admin/admin-request-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function AdminRequestsPage() {
   return (
     <main className="relative w-full h-full px-5 z-10">
       <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
         <div className="mb-8">
+          <SidebarTrigger />
           <h1 className="text-3xl font-bold">Manage Requests</h1>
           <p className="text-muted-foreground mt-2">
             Review and respond to user requests for book extensions, damage

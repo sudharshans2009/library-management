@@ -343,7 +343,7 @@ async function DashboardContent() {
                       const today = new Date();
                       const daysUntilDue = Math.floor(
                         (dueDate.getTime() - today.getTime()) /
-                          (1000 * 60 * 60 * 24)
+                          (1000 * 60 * 60 * 24),
                       );
                       return daysUntilDue >= 0 && daysUntilDue <= 7;
                     })
@@ -353,7 +353,7 @@ async function DashboardContent() {
                       const today = new Date();
                       const daysUntilDue = Math.floor(
                         (dueDate.getTime() - today.getTime()) /
-                          (1000 * 60 * 60 * 24)
+                          (1000 * 60 * 60 * 24),
                       );
 
                       return (
@@ -399,7 +399,7 @@ export default function DashboardPage() {
   return (
     <main className="relative w-full h-full min-h-screen px-5 py-4 z-10">
       <Background />
-      <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
+      <div className="relative flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8 z-10">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Dashboard</h1>

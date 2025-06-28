@@ -56,7 +56,7 @@ export default function SignUp() {
         try {
           imageUrl = await uploadImageAction(formData.image);
         } catch (error) {
-					console.error("Image upload failed:", error);
+          console.error("Image upload failed:", error);
           throw new Error("Failed to upload image");
         }
       }

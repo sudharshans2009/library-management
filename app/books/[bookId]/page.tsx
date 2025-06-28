@@ -1,15 +1,15 @@
 import Image from "next/image";
 import React from "react";
-import { 
-  Book, 
-  Star, 
-  Users, 
-  BookOpen, 
+import {
+  Book,
+  Star,
+  Users,
+  BookOpen,
   Clock,
   Share2,
   Heart,
   Download,
-  Play
+  Play,
 } from "lucide-react";
 import { Background } from "@/components/background";
 import { Progress } from "@/components/ui/progress";
@@ -45,18 +45,18 @@ export default async function BookPage({
   }
 
   const book = result.data;
-  const availabilityPercentage = (book.availableCopies / book.totalCopies) * 100;
+  const availabilityPercentage =
+    (book.availableCopies / book.totalCopies) * 100;
   const isAvailable = book.availableCopies > 0;
 
   return (
     <main className="relative w-full min-h-screen">
       <Background />
-      
+
       {/* Hero Section */}
       <section className="relative pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-5">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
-            
             {/* Book Cover */}
             <div className="relative">
               <div className="sticky top-24">
@@ -73,9 +73,11 @@ export default async function BookPage({
                         sizes="(max-width: 768px) 100vw, 400px"
                       />
                     ) : (
-                      <div 
+                      <div
                         className="w-full h-full flex items-center justify-center rounded-xl shadow-2xl"
-                        style={{ backgroundColor: book.coverColor || '#6366f1' }}
+                        style={{
+                          backgroundColor: book.coverColor || "#6366f1",
+                        }}
                       >
                         <Book className="w-20 h-20 text-white opacity-80" />
                       </div>
@@ -115,8 +117,13 @@ export default async function BookPage({
 
                 <div className="flex items-center gap-2">
                   <span className="text-xl text-muted-foreground">by</span>
-                  <Link href={`/authors/${book.author.replace(/\s+/g, '-').toLowerCase()}`}>
-                    <Badge variant="secondary" className="text-lg px-4 py-2 hover:bg-secondary/80 transition-colors cursor-pointer">
+                  <Link
+                    href={`/authors/${book.author.replace(/\s+/g, "-").toLowerCase()}`}
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="text-lg px-4 py-2 hover:bg-secondary/80 transition-colors cursor-pointer"
+                    >
                       {book.author}
                     </Badge>
                   </Link>
@@ -132,15 +139,17 @@ export default async function BookPage({
                           i < Math.floor(book.rating)
                             ? "fill-yellow-400 text-yellow-400"
                             : i < book.rating
-                            ? "fill-yellow-400/50 text-yellow-400"
-                            : "text-gray-300"
+                              ? "fill-yellow-400/50 text-yellow-400"
+                              : "text-gray-300"
                         }`}
                       />
                     ))}
                   </div>
                   <span className="text-lg font-semibold">{book.rating}</span>
                   <span className="text-muted-foreground">•</span>
-                  <span className="text-muted-foreground">{book.totalCopies * 47} reviews</span>
+                  <span className="text-muted-foreground">
+                    {book.totalCopies * 47} reviews
+                  </span>
                 </div>
               </div>
 
@@ -152,18 +161,23 @@ export default async function BookPage({
               </div>
 
               {/* Availability Card */}
-              <Card className={`border-2 ${isAvailable ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20' : 'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20'}`}>
+              <Card
+                className={`border-2 ${isAvailable ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20" : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20"}`}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                       <Users className="w-5 h-5" />
                       Availability
                     </h3>
-                    <Badge variant={isAvailable ? "default" : "destructive"} className="text-sm">
+                    <Badge
+                      variant={isAvailable ? "default" : "destructive"}
+                      className="text-sm"
+                    >
                       {isAvailable ? "Available" : "Not Available"}
                     </Badge>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span>Available Copies</span>
@@ -173,10 +187,9 @@ export default async function BookPage({
                     </div>
                     <Progress value={availabilityPercentage} className="h-2" />
                     <p className="text-sm text-muted-foreground">
-                      {isAvailable 
+                      {isAvailable
                         ? `${book.availableCopies} copies ready to borrow`
-                        : "All copies are currently checked out"
-                      }
+                        : "All copies are currently checked out"}
                     </p>
                   </div>
                 </CardContent>
@@ -196,7 +209,9 @@ export default async function BookPage({
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold">{book.totalCopies}</div>
-                    <div className="text-sm text-muted-foreground">Total Copies</div>
+                    <div className="text-sm text-muted-foreground">
+                      Total Copies
+                    </div>
                   </CardContent>
                 </Card>
                 <Card>
@@ -207,8 +222,12 @@ export default async function BookPage({
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold">{book.totalCopies - book.availableCopies}</div>
-                    <div className="text-sm text-muted-foreground">Borrowed</div>
+                    <div className="text-2xl font-bold">
+                      {book.totalCopies - book.availableCopies}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Borrowed
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -221,7 +240,6 @@ export default async function BookPage({
       <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-5">
           <div className="grid lg:grid-cols-3 gap-8">
-            
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               <Card>
@@ -282,7 +300,9 @@ export default async function BookPage({
                     <Separator />
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Available</span>
-                      <span className="font-medium">{book.availableCopies}/{book.totalCopies}</span>
+                      <span className="font-medium">
+                        {book.availableCopies}/{book.totalCopies}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -296,8 +316,12 @@ export default async function BookPage({
                       <div key={i} className="flex gap-3">
                         <div className="w-12 h-16 bg-muted rounded-md flex-shrink-0"></div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">Similar Book {i}</p>
-                          <p className="text-xs text-muted-foreground">Author Name</p>
+                          <p className="text-sm font-medium truncate">
+                            Similar Book {i}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Author Name
+                          </p>
                           <div className="flex items-center gap-1 mt-1">
                             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                             <span className="text-xs">4.{i}</span>
@@ -348,7 +372,9 @@ export async function generateMetadata({
 
   return {
     title: `${book.title} by ${book.author} | SS.Library`,
-    description: book.description || `Discover ${book.title} by ${book.author}. Available for borrowing at SS.Library.`,
+    description:
+      book.description ||
+      `Discover ${book.title} by ${book.author}. Available for borrowing at SS.Library.`,
     openGraph: {
       title: `${book.title} by ${book.author}`,
       description: book.description,

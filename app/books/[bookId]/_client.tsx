@@ -74,7 +74,7 @@ export function AddBookButton({ bookId, className }: AddBookButtonProps) {
         } else {
           toast.success("Book borrowed successfully!", {
             description: `Due: ${new Date(
-              result.data?.borrowRecord.dueDate || ""
+              result.data?.borrowRecord.dueDate || "",
             ).toLocaleDateString()}`,
             icon: <Check className="w-4 h-4" />,
             duration: 5000,

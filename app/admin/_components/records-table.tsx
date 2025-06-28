@@ -431,7 +431,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
           `"${row.returnDate || "N/A"}"`,
           `"${row.status}"`,
           `"${row.daysOverdue || 0}"`,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -441,7 +441,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
     link.setAttribute("href", url);
     link.setAttribute(
       "download",
-      `borrow_records_export_${new Date().toISOString().split("T")[0]}.csv`
+      `borrow_records_export_${new Date().toISOString().split("T")[0]}.csv`,
     );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
@@ -532,7 +532,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -550,7 +550,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -578,7 +578,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
               Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
               {Math.min(
                 (pagination.pageIndex + 1) * pagination.pageSize,
-                query.data.data.totalCount
+                query.data.data.totalCount,
               )}{" "}
               of {query.data.data.totalCount} records
             </>

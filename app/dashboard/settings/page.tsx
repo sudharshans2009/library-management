@@ -169,10 +169,10 @@ export default function SettingsPage() {
   if (!mounted) return null;
 
   return (
-    <main className="relative w-full min-h-screen">
+    <main className="relative w-full min-h-screen z-10">
       <Background />
 
-      <div className="relative max-w-4xl mx-auto px-5 pt-20 pb-16 z-20">
+      <div className="relative max-w-4xl mx-auto px-5 pt-20 pb-16">
         {/* Header */}
         <div className="text-center space-y-6 mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-medium">
@@ -346,7 +346,7 @@ export default function SettingsPage() {
                                         <SelectItem key={cls} value={cls}>
                                           Class {cls}
                                         </SelectItem>
-                                      )
+                                      ),
                                     )
                                   )}
                                 </SelectGroup>

@@ -15,6 +15,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -33,10 +35,12 @@ import {
   MessageCircle,
   Check,
   X,
+  CalendarDays,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { getRequests, respondToRequest } from "@/actions/requests";
+import { getRequests, respondToRequestWithAction } from "@/actions/requests";
 import type { RequestSearchOptions } from "@/lib/services/requests";
 
 interface AdminRequestListProps {
@@ -50,8 +54,9 @@ export function AdminRequestList({
   const [responseDialogOpen, setResponseDialogOpen] = useState(false);
   const [responseText, setResponseText] = useState("");
   const [responseAction, setResponseAction] = useState<"APPROVED" | "REJECTED">(
-    "APPROVED"
+    "APPROVED",
   );
+  const [customDueDate, setCustomDueDate] = useState("");
   const queryClient = useQueryClient();
 
   const requestsQuery = useQuery({
@@ -60,14 +65,19 @@ export function AdminRequestList({
   });
 
   const respondMutation = useMutation({
-    mutationFn: respondToRequest,
+    mutationFn: respondToRequestWithAction,
     onSuccess: (result) => {
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message, {
+          description: result.data
+            ? `Action: ${result.data.actionType}`
+            : undefined,
+        });
         queryClient.invalidateQueries({ queryKey: ["admin", "requests"] });
         setResponseDialogOpen(false);
         setSelectedRequest(null);
         setResponseText("");
+        setCustomDueDate("");
       } else {
         toast.error(result.message);
       }
@@ -81,20 +91,71 @@ export function AdminRequestList({
   const handleRespond = (action: "APPROVED" | "REJECTED") => {
     if (!selectedRequest || !responseText.trim()) return;
 
+    const actionData: any = {};
+
+    // Add custom data for specific request types
+    if (
+      action === "APPROVED" &&
+      selectedRequest.type === "CHANGE_DUE_DATE" &&
+      customDueDate
+    ) {
+      actionData.newDueDate = customDueDate;
+    }
+
     respondMutation.mutate({
       requestId: selectedRequest.id,
       status: action,
       adminResponse: responseText.trim(),
+      actionData:
+        Object.keys(actionData).length > 0 ? actionData : undefined,
     });
   };
 
   const openResponseDialog = (
     request: any,
-    action: "APPROVED" | "REJECTED"
+    action: "APPROVED" | "REJECTED",
   ) => {
     setSelectedRequest(request);
     setResponseAction(action);
     setResponseDialogOpen(true);
+
+    // Set default response text based on action and request type
+    if (action === "APPROVED") {
+      setResponseText(getDefaultApprovalMessage(request.type));
+    } else {
+      setResponseText("Request has been reviewed and rejected.");
+    }
+
+    // Reset custom due date
+    setCustomDueDate("");
+  };
+
+  const getDefaultApprovalMessage = (requestType: string): string => {
+    const messages: Record<string, string> = {
+      EXTEND_BORROW: "Your borrow period has been extended by 7 days.",
+      REPORT_LOST:
+        "Lost book report processed. Please be more careful with library materials.",
+      REPORT_DAMAGE:
+        "Damage report processed. Please be more careful with library materials.",
+      EARLY_RETURN:
+        "Thank you for returning the book early. Your request has been processed.",
+      CHANGE_DUE_DATE: "Your due date has been updated as requested.",
+      OTHER: "Your request has been reviewed and approved.",
+    };
+    return messages[requestType] || "Your request has been approved.";
+  };
+
+  const getActionWarning = (requestType: string): string | null => {
+    const warnings: Record<string, string> = {
+      REPORT_LOST:
+        "⚠️ This will remove the book from inventory and suspend the user for 1 week.",
+      REPORT_DAMAGE:
+        "⚠️ This will remove the book from inventory and suspend the user for 1 week.",
+      EXTEND_BORROW: "ℹ️ This will extend the due date by 7 days.",
+      EARLY_RETURN: "ℹ️ This will mark the book as returned and make it available.",
+      CHANGE_DUE_DATE: "ℹ️ This will change the due date to your specified date.",
+    };
+    return warnings[requestType] || null;
   };
 
   const getStatusIcon = (status: string) => {
@@ -143,9 +204,9 @@ export function AdminRequestList({
             <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
             <div className="absolute inset-0 w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
           </div>
-          <p className="text-lg font-medium">Loading your requests...</p>
+          <p className="text-lg font-medium">Loading requests...</p>
           <p className="text-sm text-muted-foreground">
-            Please wait while we fetch your information
+            Please wait while we fetch the information
           </p>
         </div>
       </div>
@@ -204,19 +265,17 @@ export function AdminRequestList({
                 {request.status === "PENDING" && (
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
                       size="sm"
                       onClick={() => openResponseDialog(request, "APPROVED")}
-                      className="text-green-600 border-green-600 hover:bg-green-50"
+                      className="bg-green-600 hover:bg-green-700"
                     >
                       <Check className="h-4 w-4 mr-1" />
                       Approve
                     </Button>
                     <Button
-                      variant="outline"
                       size="sm"
+                      variant="destructive"
                       onClick={() => openResponseDialog(request, "REJECTED")}
-                      className="text-red-600 border-red-600 hover:bg-red-50"
                     >
                       <X className="h-4 w-4 mr-1" />
                       Reject
@@ -315,26 +374,67 @@ export function AdminRequestList({
         ))}
       </div>
 
-      {/* Response Dialog */}
+      {/* Enhanced Response Dialog */}
       <Dialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
               {responseAction === "APPROVED" ? "Approve" : "Reject"} Request
             </DialogTitle>
             <DialogDescription>
-              Provide a response for this{" "}
-              {getRequestTypeLabel(selectedRequest?.type || "")} request.
+              {responseAction === "APPROVED"
+                ? "Approve and process"
+                : "Reject"}{" "}
+              this {getRequestTypeLabel(selectedRequest?.type || "")} request.
             </DialogDescription>
           </DialogHeader>
+
           <div className="space-y-4">
-            <Textarea
-              placeholder={`Enter your ${responseAction === "APPROVED" ? "approval" : "rejection"} message...`}
-              value={responseText}
-              onChange={(e) => setResponseText(e.target.value)}
-              className="min-h-[100px]"
-            />
+            {/* Action Warning */}
+            {responseAction === "APPROVED" &&
+              selectedRequest &&
+              getActionWarning(selectedRequest.type) && (
+                <div className="p-3 border border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5" />
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                      {getActionWarning(selectedRequest.type)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {/* Custom Due Date for CHANGE_DUE_DATE requests */}
+            {responseAction === "APPROVED" &&
+              selectedRequest?.type === "CHANGE_DUE_DATE" && (
+                <div className="space-y-2">
+                  <Label htmlFor="custom-due-date">New Due Date</Label>
+                  <Input
+                    id="custom-due-date"
+                    type="date"
+                    value={customDueDate}
+                    onChange={(e) => setCustomDueDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Select the new due date for this book
+                  </p>
+                </div>
+              )}
+
+            {/* Response Text */}
+            <div className="space-y-2">
+              <Label htmlFor="response">Response Message</Label>
+              <Textarea
+                id="response"
+                placeholder="Enter your response..."
+                value={responseText}
+                onChange={(e) => setResponseText(e.target.value)}
+                rows={4}
+              />
+            </div>
           </div>
+
           <DialogFooter>
             <Button
               variant="outline"
@@ -344,16 +444,24 @@ export function AdminRequestList({
             </Button>
             <Button
               onClick={() => handleRespond(responseAction)}
-              disabled={!responseText.trim() || respondMutation.isPending}
-              variant={
-                responseAction === "APPROVED" ? "default" : "destructive"
+              disabled={
+                respondMutation.isPending ||
+                !responseText.trim() ||
+                (responseAction === "APPROVED" &&
+                  selectedRequest?.type === "CHANGE_DUE_DATE" &&
+                  !customDueDate)
+              }
+              className={
+                responseAction === "APPROVED"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : ""
               }
             >
               {respondMutation.isPending
                 ? "Processing..."
                 : responseAction === "APPROVED"
-                  ? "Approve"
-                  : "Reject"}
+                ? "Approve & Process"
+                : "Reject"}
             </Button>
           </DialogFooter>
         </DialogContent>

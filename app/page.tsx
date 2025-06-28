@@ -9,12 +9,7 @@ import {
   FileText,
   Shield,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Background } from "@/components/background";
 import BooksList from "@/components/book-list";
 import { auth } from "@/lib/auth/main";

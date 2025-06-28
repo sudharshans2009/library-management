@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme";
@@ -7,6 +7,7 @@ import Navbar from "@/components/navbar";
 import { QueryProvider } from "@/components/providers/query";
 import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/footer";
+import LoadingPage from "./loading";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -33,15 +34,17 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-        <QueryProvider>
-          <ThemeProvider>
-            <Navbar />
-            {children}
-            {modal}
-            <Footer />
-            <Toaster position="bottom-right" richColors />
-          </ThemeProvider>
-        </QueryProvider>
+        <Suspense fallback={<LoadingPage />}>
+          <QueryProvider>
+            <ThemeProvider>
+              <Navbar />
+              {children}
+              {modal}
+              <Footer />
+              <Toaster position="bottom-right" richColors />
+            </ThemeProvider>
+          </QueryProvider>
+        </Suspense>
       </body>
     </html>
   );

@@ -139,14 +139,19 @@ export function CreateRequestForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Borrow Record</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={
-                            borrowRecordsQuery.isLoading 
-                              ? "Loading borrowed books..." 
-                              : "Select a borrowed book"
-                          } />
+                          <SelectValue
+                            placeholder={
+                              borrowRecordsQuery.isLoading
+                                ? "Loading borrowed books..."
+                                : "Select a borrowed book"
+                            }
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -162,9 +167,14 @@ export function CreateRequestForm({
                           borrowRecordsQuery.data?.data?.map((record) => (
                             <SelectItem key={record.id} value={record.id}>
                               <div className="flex flex-col">
-                                <span className="font-medium">{record.bookTitle}</span>
+                                <span className="font-medium">
+                                  {record.bookTitle}
+                                </span>
                                 <span className="text-sm text-muted-foreground">
-                                  by {record.bookAuthor} • Due: {new Date(record.dueDate).toLocaleDateString()}
+                                  by {record.bookAuthor} • Due:{" "}
+                                  {new Date(
+                                    record.dueDate,
+                                  ).toLocaleDateString()}
                                 </span>
                               </div>
                             </SelectItem>

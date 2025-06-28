@@ -3,7 +3,13 @@
 // components/account/notification-settings.tsx
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,7 +20,9 @@ interface NotificationSettingsProps {
   user: any;
 }
 
-export function NotificationSettings({ user: _user }: NotificationSettingsProps) {
+export function NotificationSettings({
+  user: _user,
+}: NotificationSettingsProps) {
   return (
     <div className="space-y-6">
       <Card>
@@ -24,7 +32,8 @@ export function NotificationSettings({ user: _user }: NotificationSettingsProps)
             Notification Preferences
           </CardTitle>
           <CardDescription>
-            Choose how you want to receive notifications about your library activity.
+            Choose how you want to receive notifications about your library
+            activity.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -41,9 +50,9 @@ export function NotificationSettings({ user: _user }: NotificationSettingsProps)
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <Separator />
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="flex items-center gap-2">
@@ -56,9 +65,9 @@ export function NotificationSettings({ user: _user }: NotificationSettingsProps)
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <Separator />
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="flex items-center gap-2">
@@ -72,7 +81,7 @@ export function NotificationSettings({ user: _user }: NotificationSettingsProps)
               <Switch defaultChecked />
             </div>
           </div>
-          
+
           <Button className="w-full">Save Notification Settings</Button>
         </CardContent>
       </Card>

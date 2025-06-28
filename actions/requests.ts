@@ -22,11 +22,14 @@ import {
   CreateRequestSchema,
   RescindRequestSchema,
   AdminResponseSchema,
+  AdminResponseWithActionSchema,
   type CreateRequestSchemaType,
   type RescindRequestSchemaType,
   type AdminResponseSchemaType,
+  type AdminResponseWithActionSchemaType,
 } from "@/schemas/request";
 import { v4 as uuidv4 } from "uuid";
+import { executeRequestAction, unsuspendUser } from "@/lib/services/request-actions";
 
 // Helper function to check authentication and get user config
 async function checkAuthAndGetConfig() {
@@ -272,6 +275,114 @@ export async function respondToRequest(data: AdminResponseSchemaType): Promise<{
       success: false,
       message:
         error instanceof Error ? error.message : "Failed to respond to request",
+    };
+  }
+}
+
+export async function respondToRequestWithAction(data: AdminResponseWithActionSchemaType): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const validatedData = AdminResponseWithActionSchema.parse(data);
+
+    const { session, config: userConfig } = await checkAuthAndGetConfig();
+
+    // Check admin permissions
+    checkAdminPermissions(userConfig);
+
+    // Get the request to verify it exists and is pending
+    const request = await getRequestByIdService(validatedData.requestId);
+
+    if (!request) {
+      return {
+        success: false,
+        message: "Request not found",
+      };
+    }
+
+    if (request.status !== "PENDING") {
+      return {
+        success: false,
+        message: "Only pending requests can be responded to",
+      };
+    }
+
+    let actionResult = null;
+
+    // If approving, execute the specific action
+    if (validatedData.status === "APPROVED") {
+      actionResult = await executeRequestAction(
+        validatedData.requestId,
+        request.type,
+        session.user.id,
+        validatedData.actionData,
+      );
+
+      if (!actionResult.success) {
+        return {
+          success: false,
+          message: `Failed to execute request action: ${actionResult.message}`,
+        };
+      }
+    }
+
+    // Update the request status
+    await respondToRequestService(
+      validatedData.requestId,
+      validatedData.status,
+      validatedData.adminResponse,
+      session.user.id,
+    );
+
+    revalidatePath("/admin/requests");
+    revalidatePath("/dashboard");
+    revalidatePath("/requests");
+
+    const message =
+      validatedData.status === "APPROVED"
+        ? `Request approved and processed: ${actionResult?.message || "Action completed"}`
+        : `Request ${validatedData.status.toLowerCase()} successfully`;
+
+    return {
+      success: true,
+      message,
+      data: actionResult?.data,
+    };
+  } catch (error) {
+    console.error("Error responding to request:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Failed to respond to request",
+    };
+  }
+}
+
+export async function unsuspendUserAction(userId: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
+  try {
+    const { session, config: userConfig } = await checkAuthAndGetConfig();
+
+    // Check admin permissions
+    checkAdminPermissions(userConfig);
+
+    const result = await unsuspendUser(userId, session.user.id);
+
+    if (result.success) {
+      revalidatePath("/admin/users");
+      revalidatePath("/admin/requests");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error unsuspending user:", error);
+    return {
+      success: false,
+      message: "Failed to unsuspend user",
     };
   }
 }

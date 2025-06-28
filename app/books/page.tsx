@@ -4,13 +4,7 @@ import { Background } from "@/components/background";
 import BooksList from "@/components/book-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  BookOpen,
-  Filter,
-  TrendingUp,
-  Star,
-  Users,
-} from "lucide-react";
+import { BookOpen, Filter, TrendingUp, Star, Users } from "lucide-react";
 
 interface BooksPageProps {
   searchParams: Promise<{
@@ -67,29 +61,29 @@ async function BooksPageContent({ searchParams }: { searchParams: any }) {
       value: "2,847",
       icon: BookOpen,
       trend: "+12% from last month",
-      color: "text-blue-600"
+      color: "text-blue-600",
     },
     {
       title: "Available Now",
       value: "1,923",
       icon: Users,
       trend: "73% availability",
-      color: "text-green-600"
+      color: "text-green-600",
     },
     {
       title: "Popular Today",
       value: "156",
       icon: TrendingUp,
       trend: "+8% from yesterday",
-      color: "text-purple-600"
+      color: "text-purple-600",
     },
     {
       title: "Avg Rating",
       value: "4.2",
       icon: Star,
       trend: "Based on 12k reviews",
-      color: "text-yellow-600"
-    }
+      color: "text-yellow-600",
+    },
   ];
 
   return (
@@ -102,19 +96,21 @@ async function BooksPageContent({ searchParams }: { searchParams: any }) {
         </div>
         <h1 className="text-4xl lg:text-6xl font-bold leading-tight tracking-tight">
           Discover Your Next
-          <span className="block text-primary">
-            Great Read
-          </span>
+          <span className="block text-primary">Great Read</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Explore our vast collection of books spanning every genre, from timeless classics to contemporary bestsellers.
+          Explore our vast collection of books spanning every genre, from
+          timeless classics to contemporary bestsellers.
         </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+          <Card
+            key={index}
+            className="relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+          >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -124,11 +120,11 @@ async function BooksPageContent({ searchParams }: { searchParams: any }) {
                   <p className="text-3xl font-bold tracking-tight">
                     {stat.value}
                   </p>
-                  <p className={`text-xs ${stat.color} mt-1`}>
-                    {stat.trend}
-                  </p>
+                  <p className={`text-xs ${stat.color} mt-1`}>{stat.trend}</p>
                 </div>
-                <div className={`${stat.color} opacity-20 group-hover:opacity-30 transition-opacity`}>
+                <div
+                  className={`${stat.color} opacity-20 group-hover:opacity-30 transition-opacity`}
+                >
                   <stat.icon className="w-8 h-8" />
                 </div>
               </div>
@@ -178,9 +174,11 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
 
 export const metadata = {
   title: "Books | SS.Library",
-  description: "Discover and borrow from our extensive collection of books across all genres.",
+  description:
+    "Discover and borrow from our extensive collection of books across all genres.",
   openGraph: {
     title: "Books Collection | SS.Library",
-    description: "Explore thousands of books available for borrowing at SS.Library",
+    description:
+      "Explore thousands of books available for borrowing at SS.Library",
   },
 };

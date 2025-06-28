@@ -62,7 +62,7 @@ export default function UserDropdown({ user, config }: UserDropdownProps) {
         <DropdownMenuItem asChild>
           <Link href="/dashboard/account" className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
-            Profile
+            Account
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

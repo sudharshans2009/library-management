@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ bookId: string }> }
+  { params }: { params: Promise<{ bookId: string }> },
 ) {
   try {
     const bookId = (await params).bookId;
@@ -48,13 +48,14 @@ export async function POST(
       return new Response(
         JSON.stringify({
           error: "Insufficient permissions",
-          message: "Only administrators and moderators can approve borrow requests",
+          message:
+            "Only administrators and moderators can approve borrow requests",
           userRole: userConfig.role,
         }),
         {
           status: 403,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -80,7 +81,7 @@ export async function POST(
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -107,7 +108,7 @@ export async function POST(
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -121,7 +122,7 @@ export async function POST(
         .update(borrowRecords)
         .set({
           status: "BORROWED",
-          dueDate: newDueDate.toISOString().split('T')[0], // Convert to YYYY-MM-DD format for date field
+          dueDate: newDueDate.toISOString().split("T")[0], // Convert to YYYY-MM-DD format for date field
           updatedAt: new Date(),
         })
         .where(eq(borrowRecords.id, recordId))
@@ -168,7 +169,7 @@ export async function POST(
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("Approve error:", error);
@@ -181,7 +182,7 @@ export async function POST(
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }
@@ -199,6 +200,6 @@ export async function GET() {
     }),
     {
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
 }

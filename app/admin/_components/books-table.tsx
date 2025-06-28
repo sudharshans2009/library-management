@@ -541,7 +541,7 @@ export default function BooksTable() {
           `"${row.availability}"`,
           `"${row.rating}"`,
           `"${row.createdAt}"`,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -551,7 +551,7 @@ export default function BooksTable() {
     link.setAttribute("href", url);
     link.setAttribute(
       "download",
-      `books_export_${new Date().toISOString().split("T")[0]}.csv`
+      `books_export_${new Date().toISOString().split("T")[0]}.csv`,
     );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
@@ -681,7 +681,7 @@ export default function BooksTable() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -703,7 +703,7 @@ export default function BooksTable() {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -731,7 +731,7 @@ export default function BooksTable() {
               Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
               {Math.min(
                 (pagination.pageIndex + 1) * pagination.pageSize,
-                query.data.data.totalCount
+                query.data.data.totalCount,
               )}{" "}
               of {query.data.data.totalCount} books
             </>

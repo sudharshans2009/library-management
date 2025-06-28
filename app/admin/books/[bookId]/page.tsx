@@ -18,6 +18,7 @@ import {
 import { getBookById, getAdminBooks } from "@/actions/books";
 import { getBorrowRecords } from "@/actions/records";
 import BorrowRecordsTable from "../_components/borrow-records-table";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface AdminBookDetailsPageProps {
   params: Promise<{
@@ -61,6 +62,7 @@ export default async function AdminBookDetailsPage({
       <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
+          <SidebarTrigger />
           <div>
             <h1 className="text-3xl font-bold">{book.title}</h1>
             <p className="text-muted-foreground mt-2">
