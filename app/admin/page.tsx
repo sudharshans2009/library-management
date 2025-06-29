@@ -249,15 +249,17 @@ function DashboardSkeleton() {
 
 export default function AdminPage() {
   return (
-    <div className="flex flex-col">
+    <div className="pt-16 flex flex-col">
       {/* Desktop Sidebar Toggle */}
-      <div className="hidden md:flex items-center gap-2 p-4 border-b">
-        <SidebarTrigger />
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Overview of your library management system
-          </p>
+      <div className="hidden md:flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
+          <SidebarTrigger />
+          <div>
+            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Overview of your library management system
+            </p>
+          </div>
         </div>
       </div>
 

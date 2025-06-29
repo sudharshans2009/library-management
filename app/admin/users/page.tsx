@@ -1,21 +1,34 @@
 import UsersTable from "../_components/users-table";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export default function AdminRecordsPage() {
+export default function AdminUsersPage() {
   return (
-    <main className="relative w-full px-5 z-10">
-      <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
-        <div className="mb-8">
+    <div className="pt-16 flex flex-col">
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
           <SidebarTrigger />
-          <h1 className="text-3xl font-bold">Users</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage all the users using the library
-          </p>
-        </div>
-        <div className="flex-1 overflow-scroll">
-          <UsersTable />
+          <div>
+            <h1 className="text-2xl font-bold">Users Management</h1>
+            <p className="text-sm text-muted-foreground">
+              Manage all the users using the library
+            </p>
+          </div>
         </div>
       </div>
-    </main>
+
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b">
+        <div>
+          <h1 className="text-2xl font-bold">Users</h1>
+          <p className="text-sm text-muted-foreground">Manage library users</p>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-4 md:p-6">
+        <UsersTable />
+      </div>
+    </div>
   );
 }

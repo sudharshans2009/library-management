@@ -6,7 +6,7 @@ import BooksTable from "../_components/books-table";
 
 export default function AdminBooksPage() {
   return (
-    <div className="flex flex-col">
+    <div className="pt-16 flex flex-col">
       {/* Desktop Header */}
       <div className="hidden md:flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
