@@ -12,7 +12,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { DataTableColumnHeader } from "@/components/datatable/coulumn-header";
 import { DataTableFacetedFilter } from "@/components/datatable/faceted-filters";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

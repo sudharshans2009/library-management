@@ -1,5 +1,5 @@
 // components/navbar.tsx
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { auth } from "@/lib/auth/main";

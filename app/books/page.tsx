@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { Background } from "@/components/background";
 import BooksList from "@/components/book-list";
 import { Card, CardContent } from "@/components/ui/card";
