@@ -1,10 +1,9 @@
 // app/admin/_components/admin-sidebar.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -17,11 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-  SidebarSeparator,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -30,21 +25,10 @@ import {
   Users,
   FileText,
   MessageSquare,
-  Settings,
   ChevronDown,
   ChevronRight,
-  BarChart3,
   Shield,
-  Bell,
-  LogOut,
-  User,
-  Database,
-  Activity,
-  Calendar,
-  Home,
-  Download,
   Upload,
-  Archive,
   Clock,
   CheckCircle,
   AlertTriangle,
@@ -65,7 +49,6 @@ interface NavItem {
 export function AdminSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { open, setOpen } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   // Fetch dashboard stats for badges
@@ -81,7 +64,7 @@ export function AdminSidebar() {
     setExpandedItems((prev) =>
       prev.includes(title)
         ? prev.filter((item) => item !== title)
-        : [...prev, title]
+        : [...prev, title],
     );
   };
 
@@ -102,6 +85,7 @@ export function AdminSidebar() {
           title: "All Books",
           url: "/admin/books",
           icon: BookOpen,
+          badge: stats?.totalBooks,
           isActive: pathname === "/admin/books",
         },
         {
@@ -110,19 +94,16 @@ export function AdminSidebar() {
           icon: Upload,
           isActive: pathname === "/admin/books/new",
         },
-        {
-          title: "Categories",
-          url: "/admin/books/categories",
-          icon: Archive,
-          isActive: pathname === "/admin/books/categories",
-        },
       ],
     },
     {
       title: "Users Management",
       url: "/admin/users",
       icon: Users,
-      badge: stats?.pendingUsers > 0 ? stats.pendingUsers : undefined,
+      badge:
+        stats?.pendingUsers !== undefined && stats.pendingUsers > 0
+          ? stats.pendingUsers
+          : undefined,
       items: [
         {
           title: "All Users",
@@ -177,7 +158,10 @@ export function AdminSidebar() {
           title: "Overdue Books",
           url: "/admin/records?overdue=true",
           icon: AlertTriangle,
-          badge: stats?.overdueBorrows > 0 ? stats.overdueBorrows : undefined,
+          badge:
+            stats?.overdueBorrows !== undefined && stats.overdueBorrows > 0
+              ? stats.overdueBorrows
+              : undefined,
           isActive:
             pathname === "/admin/records" && pathname.includes("overdue"),
         },
@@ -194,60 +178,11 @@ export function AdminSidebar() {
       title: "Requests",
       url: "/admin/requests",
       icon: MessageSquare,
-      badge: stats?.pendingRequests > 0 ? stats.pendingRequests : undefined,
+      badge:
+        stats?.pendingRequests !== undefined && stats.pendingRequests > 0
+          ? stats.pendingRequests
+          : undefined,
       isActive: pathname === "/admin/requests",
-    },
-    {
-      title: "Analytics",
-      url: "/admin/analytics",
-      icon: BarChart3,
-      items: [
-        {
-          title: "Overview",
-          url: "/admin/analytics",
-          icon: BarChart3,
-          isActive: pathname === "/admin/analytics",
-        },
-        {
-          title: "Book Trends",
-          url: "/admin/analytics/books",
-          icon: BookOpen,
-          isActive: pathname === "/admin/analytics/books",
-        },
-        {
-          title: "User Activity",
-          url: "/admin/analytics/users",
-          icon: Activity,
-          isActive: pathname === "/admin/analytics/users",
-        },
-        {
-          title: "Reports",
-          url: "/admin/analytics/reports",
-          icon: Download,
-          isActive: pathname === "/admin/analytics/reports",
-        },
-      ],
-    },
-  ];
-
-  const bottomNavItems: NavItem[] = [
-    {
-      title: "Settings",
-      url: "/admin/settings",
-      icon: Settings,
-      isActive: pathname === "/admin/settings",
-    },
-    {
-      title: "System Health",
-      url: "/admin/system",
-      icon: Database,
-      isActive: pathname === "/admin/system",
-    },
-    {
-      title: "Back to App",
-      url: "/dashboard",
-      icon: Home,
-      isActive: false,
     },
   ];
 
@@ -264,12 +199,12 @@ export function AdminSidebar() {
       side="left"
       variant="inset"
       collapsible="icon"
-      className="hidden md:flex border-r p-0"
+      className="hidden md:flex border-r p-0 pt-16"
     >
       <SidebarHeader className="border-b h-16 border-sidebar-border">
-        <div className="flex items-center gap-3 px-3 py-2">
+        <div className="flex items-center gap-3 group-data-[collapsible=icon]:mx-auto py-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <Shield className="w-4 h-4 text-primary-foreground" />
+            <Shield className="w-4 h-4 text-foreground" />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
             <span className="font-semibold text-sm">Admin Panel</span>
@@ -299,7 +234,7 @@ export function AdminSidebar() {
                   {hasItems ? (
                     <div className="flex items-center w-full gap-2">
                       <item.icon className="w-4 h-4" />
-                      <span className="group-data-[collapsible=icon]:hidden">
+                      <span className="group-data-[collapsible=icon]:hidden truncate">
                         {item.title}
                       </span>
                       {item.badge && (
@@ -336,7 +271,7 @@ export function AdminSidebar() {
                   )}
                 </SidebarMenuButton>
 
-                {hasItems && isExpanded && (
+                {hasItems && isExpanded && item.items && (
                   <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
@@ -350,14 +285,15 @@ export function AdminSidebar() {
                           >
                             <subItem.icon className="w-3 h-3" />
                             <span className="truncate">{subItem.title}</span>
-                            {(subItem.badge !== null && subItem.badge !== undefined) && (
-                              <Badge
-                                variant="secondary"
-                                className="ml-auto h-5 px-1.5 text-xs group-data-[collapsible=icon]:hidden"
-                              >
-                                {subItem.badge}
-                              </Badge>
-                            )}
+                            {subItem.badge !== null &&
+                              subItem.badge !== undefined && (
+                                <Badge
+                                  variant="secondary"
+                                  className="ml-auto h-5 px-1.5 text-xs group-data-[collapsible=icon]:hidden"
+                                >
+                                  {subItem.badge}
+                                </Badge>
+                              )}
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -367,23 +303,6 @@ export function AdminSidebar() {
               </SidebarMenuItem>
             );
           })}
-        </SidebarMenu>
-
-        <SidebarSeparator className="my-4 !w-auto" />
-
-        <SidebarMenu>
-          {bottomNavItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={item.isActive} className="group-data-[collapsible=icon]:mx-auto">
-                <Link href={item.url} className="flex items-center w-full">
-                  <item.icon className="w-4 h-4" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    {item.title}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
         </SidebarMenu>
       </SidebarContent>
 

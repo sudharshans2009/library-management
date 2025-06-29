@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
     dynamicIO: true,
     ppr: true,
     useCache: true,
-    useLightningcss: true,
     viewTransition: true,
   },
 };

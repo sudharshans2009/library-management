@@ -21,7 +21,7 @@ export default async function EditBookPage({ params }: EditBookPageProps) {
   const book = result.data;
 
   return (
-    <main className="relative w-full h-full px-5 z-10">
+    <main className="relative w-full px-5 z-10">
       <div className="flex flex-col max-w-4xl pt-24 mx-auto min-h-screen py-8">
         <div className="mb-8">
           <SidebarTrigger />

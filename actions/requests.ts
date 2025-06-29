@@ -29,7 +29,10 @@ import {
   type AdminResponseWithActionSchemaType,
 } from "@/schemas/request";
 import { v4 as uuidv4 } from "uuid";
-import { executeRequestAction, unsuspendUser } from "@/lib/services/request-actions";
+import {
+  executeRequestAction,
+  unsuspendUser,
+} from "@/lib/services/request-actions";
 
 // Helper function to check authentication and get user config
 async function checkAuthAndGetConfig() {
@@ -279,7 +282,9 @@ export async function respondToRequest(data: AdminResponseSchemaType): Promise<{
   }
 }
 
-export async function respondToRequestWithAction(data: AdminResponseWithActionSchemaType): Promise<{
+export async function respondToRequestWithAction(
+  data: AdminResponseWithActionSchemaType,
+): Promise<{
   success: boolean;
   message: string;
   data?: any;

@@ -4,15 +4,12 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Clock,
+  CheckCircle,
   Calendar,
   AlertTriangle,
   BookOpen,
-  Ban,
-  RefreshCw
 } from "lucide-react";
 
 interface RequestHistoryProps {
@@ -25,32 +22,32 @@ export function RequestHistory({ request }: RequestHistoryProps) {
       extend_borrow: {
         icon: Calendar,
         variant: "default",
-        label: "Extended +7 days"
+        label: "Extended +7 days",
       },
       report_lost: {
         icon: AlertTriangle,
-        variant: "destructive", 
-        label: "Book Removed & User Suspended"
+        variant: "destructive",
+        label: "Book Removed & User Suspended",
       },
       report_damage: {
         icon: AlertTriangle,
         variant: "destructive",
-        label: "Book Removed & User Suspended"
+        label: "Book Removed & User Suspended",
       },
       early_return: {
         icon: BookOpen,
         variant: "default",
-        label: "Marked as Returned"
+        label: "Marked as Returned",
       },
       change_due_date: {
         icon: Calendar,
         variant: "outline",
-        label: "Due Date Changed"
+        label: "Due Date Changed",
       },
       message_only: {
         icon: CheckCircle,
         variant: "secondary",
-        label: "Acknowledged"
+        label: "Acknowledged",
       },
     };
 
@@ -58,7 +55,7 @@ export function RequestHistory({ request }: RequestHistoryProps) {
     if (!config) return null;
 
     const Icon = config.icon;
-    
+
     return (
       <Badge variant={config.variant} className="gap-1">
         <Icon className="w-3 h-3" />
@@ -74,8 +71,11 @@ export function RequestHistory({ request }: RequestHistoryProps) {
           <span>Request History</span>
           <Badge
             variant={
-              request.status === "APPROVED" ? "default" :
-              request.status === "REJECTED" ? "destructive" : "outline"
+              request.status === "APPROVED"
+                ? "default"
+                : request.status === "REJECTED"
+                  ? "destructive"
+                  : "outline"
             }
           >
             {request.status}
@@ -88,11 +88,13 @@ export function RequestHistory({ request }: RequestHistoryProps) {
             <Clock className="w-4 h-4 text-muted-foreground" />
             <span>Created: {new Date(request.createdAt).toLocaleString()}</span>
           </div>
-          
+
           {request.resolvedAt && (
             <div className="flex items-center gap-2 text-sm">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <span>Resolved: {new Date(request.resolvedAt).toLocaleString()}</span>
+              <span>
+                Resolved: {new Date(request.resolvedAt).toLocaleString()}
+              </span>
             </div>
           )}
         </div>
@@ -101,13 +103,15 @@ export function RequestHistory({ request }: RequestHistoryProps) {
           <div className="p-3 bg-muted/50 rounded-lg">
             <p className="font-medium text-sm mb-2">Action Taken:</p>
             {getActionBadge(request.actionData.actionType)}
-            
+
             {request.actionData.oldDueDate && request.actionData.newDueDate && (
               <div className="mt-2 text-xs text-muted-foreground">
-                Due date: {new Date(request.actionData.oldDueDate).toLocaleDateString()} → {new Date(request.actionData.newDueDate).toLocaleDateString()}
+                Due date:{" "}
+                {new Date(request.actionData.oldDueDate).toLocaleDateString()} →{" "}
+                {new Date(request.actionData.newDueDate).toLocaleDateString()}
               </div>
             )}
-            
+
             {request.actionData.suspensionDays && (
               <div className="mt-2 text-xs text-red-600">
                 User suspended for {request.actionData.suspensionDays} days

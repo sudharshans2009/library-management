@@ -68,12 +68,12 @@ export default function SignUp() {
           password: formData.password,
           name: `${formData.firstName} ${formData.lastName}`,
           image: imageUrl,
-          callbackURL: "/dashboard",
+          callbackURL: "/setup",
         },
         {
           onRequest: () => {},
           onSuccess: () => {
-            router.push("/dashboard");
+            router.push("/setup");
           },
           onError: (ctx) => {
             alert(ctx.error.message);
@@ -169,7 +169,7 @@ export default function SignUp() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="m@example.com"
+                        placeholder="me@example.com"
                         {...field}
                       />
                     </FormControl>

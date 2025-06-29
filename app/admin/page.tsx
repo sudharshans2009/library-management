@@ -8,7 +8,6 @@ import {
   ClockIcon,
   TrendingUpIcon,
   AlertCircleIcon,
-  CheckCircleIcon,
   EyeIcon,
   BarChart3Icon,
   CalendarIcon,
@@ -162,36 +161,6 @@ async function DashboardContent() {
 
           {/* Recent Activity */}
           <RecentActivity activities={data.recentActivity} />
-
-          {/* System Health */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <CheckCircleIcon className="w-5 h-5 mr-2" />
-                System Health
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Database</span>
-                <Badge variant="default" className="bg-green-500">
-                  Healthy
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">File Storage</span>
-                <Badge variant="default" className="bg-green-500">
-                  Healthy
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Email Service</span>
-                <Badge variant="default" className="bg-green-500">
-                  Healthy
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Today's Summary */}
           <Card>

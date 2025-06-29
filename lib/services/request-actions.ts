@@ -17,7 +17,7 @@ export async function executeRequestAction(
   requestId: string,
   requestType: string,
   adminId: string,
-  customData?: any
+  customData?: any,
 ): Promise<RequestActionResult> {
   try {
     // Get the request details
@@ -72,10 +72,10 @@ export async function executeRequestAction(
         return await handleChangeDueDate(borrowRecord, customData?.newDueDate);
 
       case "OTHER":
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: "Request acknowledged. No automatic action taken.",
-          data: { actionType: "message_only" }
+          data: { actionType: "message_only" },
         };
 
       default:
@@ -87,7 +87,9 @@ export async function executeRequestAction(
   }
 }
 
-async function handleExtendBorrow(borrowRecord: any): Promise<RequestActionResult> {
+async function handleExtendBorrow(
+  borrowRecord: any,
+): Promise<RequestActionResult> {
   try {
     // Extend due date by 7 days
     const currentDueDate = new Date(borrowRecord.dueDate);
@@ -97,7 +99,7 @@ async function handleExtendBorrow(borrowRecord: any): Promise<RequestActionResul
     await db
       .update(borrowRecords)
       .set({
-        dueDate: newDueDate.toISOString().split('T')[0],
+        dueDate: newDueDate.toISOString().split("T")[0],
         updatedAt: new Date(),
       })
       .where(eq(borrowRecords.id, borrowRecord.id));
@@ -108,7 +110,7 @@ async function handleExtendBorrow(borrowRecord: any): Promise<RequestActionResul
       data: {
         actionType: "extend_borrow",
         oldDueDate: borrowRecord.dueDate,
-        newDueDate: newDueDate.toISOString().split('T')[0],
+        newDueDate: newDueDate.toISOString().split("T")[0],
         extensionDays: 7,
       },
     };
@@ -117,7 +119,10 @@ async function handleExtendBorrow(borrowRecord: any): Promise<RequestActionResul
   }
 }
 
-async function handleReportLost(borrowRecord: any, userId: string): Promise<RequestActionResult> {
+async function handleReportLost(
+  borrowRecord: any,
+  userId: string,
+): Promise<RequestActionResult> {
   try {
     await db.transaction(async (tx) => {
       // Mark book as returned (lost)
@@ -125,7 +130,7 @@ async function handleReportLost(borrowRecord: any, userId: string): Promise<Requ
         .update(borrowRecords)
         .set({
           status: "RETURNED",
-          returnDate: new Date().toISOString().split('T')[0],
+          returnDate: new Date().toISOString().split("T")[0],
           updatedAt: new Date(),
         })
         .where(eq(borrowRecords.id, borrowRecord.id));
@@ -154,7 +159,8 @@ async function handleReportLost(borrowRecord: any, userId: string): Promise<Requ
 
     return {
       success: true,
-      message: "Lost book reported. Book removed from inventory and user suspended for 1 week.",
+      message:
+        "Lost book reported. Book removed from inventory and user suspended for 1 week.",
       data: {
         actionType: "report_lost",
         suspensionDays: 7,
@@ -166,7 +172,10 @@ async function handleReportLost(borrowRecord: any, userId: string): Promise<Requ
   }
 }
 
-async function handleReportDamage(borrowRecord: any, userId: string): Promise<RequestActionResult> {
+async function handleReportDamage(
+  borrowRecord: any,
+  userId: string,
+): Promise<RequestActionResult> {
   try {
     await db.transaction(async (tx) => {
       // Mark book as returned (damaged)
@@ -174,7 +183,7 @@ async function handleReportDamage(borrowRecord: any, userId: string): Promise<Re
         .update(borrowRecords)
         .set({
           status: "RETURNED",
-          returnDate: new Date().toISOString().split('T')[0],
+          returnDate: new Date().toISOString().split("T")[0],
           updatedAt: new Date(),
         })
         .where(eq(borrowRecords.id, borrowRecord.id));
@@ -200,7 +209,8 @@ async function handleReportDamage(borrowRecord: any, userId: string): Promise<Re
 
     return {
       success: true,
-      message: "Damaged book reported. Book removed from inventory and user suspended for 1 week.",
+      message:
+        "Damaged book reported. Book removed from inventory and user suspended for 1 week.",
       data: {
         actionType: "report_damage",
         suspensionDays: 7,
@@ -212,7 +222,9 @@ async function handleReportDamage(borrowRecord: any, userId: string): Promise<Re
   }
 }
 
-async function handleEarlyReturn(borrowRecord: any): Promise<RequestActionResult> {
+async function handleEarlyReturn(
+  borrowRecord: any,
+): Promise<RequestActionResult> {
   try {
     await db.transaction(async (tx) => {
       // Mark book as returned
@@ -220,7 +232,7 @@ async function handleEarlyReturn(borrowRecord: any): Promise<RequestActionResult
         .update(borrowRecords)
         .set({
           status: "RETURNED",
-          returnDate: new Date().toISOString().split('T')[0],
+          returnDate: new Date().toISOString().split("T")[0],
           updatedAt: new Date(),
         })
         .where(eq(borrowRecords.id, borrowRecord.id));
@@ -240,7 +252,7 @@ async function handleEarlyReturn(borrowRecord: any): Promise<RequestActionResult
       message: "Book marked as returned. Thank you for the early return!",
       data: {
         actionType: "early_return",
-        returnDate: new Date().toISOString().split('T')[0],
+        returnDate: new Date().toISOString().split("T")[0],
       },
     };
   } catch (error) {
@@ -248,14 +260,17 @@ async function handleEarlyReturn(borrowRecord: any): Promise<RequestActionResult
   }
 }
 
-async function handleChangeDueDate(borrowRecord: any, newDueDate: string): Promise<RequestActionResult> {
+async function handleChangeDueDate(
+  borrowRecord: any,
+  newDueDate: string,
+): Promise<RequestActionResult> {
   try {
     if (!newDueDate) {
       return { success: false, message: "New due date is required" };
     }
 
     const oldDueDate = borrowRecord.dueDate;
-    
+
     await db
       .update(borrowRecords)
       .set({
@@ -278,7 +293,10 @@ async function handleChangeDueDate(borrowRecord: any, newDueDate: string): Promi
   }
 }
 
-export async function unsuspendUser(userId: string, adminId: string): Promise<RequestActionResult> {
+export async function unsuspendUser(
+  userId: string,
+  adminId: string,
+): Promise<RequestActionResult> {
   try {
     await db
       .update(config)

@@ -136,7 +136,7 @@
     -webkit-backdrop-filter: blur(4px);
   }
 
-  [data-vaul-drawer]:not([data-vaul-custom-container=true])::after {
+  [data-vaul-drawer]:not([data-vaul-custom-container="true"])::after {
     position: static !important;
   }
 

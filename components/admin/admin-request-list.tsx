@@ -35,7 +35,6 @@ import {
   MessageCircle,
   Check,
   X,
-  CalendarDays,
   AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -106,8 +105,7 @@ export function AdminRequestList({
       requestId: selectedRequest.id,
       status: action,
       adminResponse: responseText.trim(),
-      actionData:
-        Object.keys(actionData).length > 0 ? actionData : undefined,
+      actionData: Object.keys(actionData).length > 0 ? actionData : undefined,
     });
   };
 
@@ -152,8 +150,10 @@ export function AdminRequestList({
       REPORT_DAMAGE:
         "⚠️ This will remove the book from inventory and suspend the user for 1 week.",
       EXTEND_BORROW: "ℹ️ This will extend the due date by 7 days.",
-      EARLY_RETURN: "ℹ️ This will mark the book as returned and make it available.",
-      CHANGE_DUE_DATE: "ℹ️ This will change the due date to your specified date.",
+      EARLY_RETURN:
+        "ℹ️ This will mark the book as returned and make it available.",
+      CHANGE_DUE_DATE:
+        "ℹ️ This will change the due date to your specified date.",
     };
     return warnings[requestType] || null;
   };
@@ -382,9 +382,7 @@ export function AdminRequestList({
               {responseAction === "APPROVED" ? "Approve" : "Reject"} Request
             </DialogTitle>
             <DialogDescription>
-              {responseAction === "APPROVED"
-                ? "Approve and process"
-                : "Reject"}{" "}
+              {responseAction === "APPROVED" ? "Approve and process" : "Reject"}{" "}
               this {getRequestTypeLabel(selectedRequest?.type || "")} request.
             </DialogDescription>
           </DialogHeader>
@@ -460,8 +458,8 @@ export function AdminRequestList({
               {respondMutation.isPending
                 ? "Processing..."
                 : responseAction === "APPROVED"
-                ? "Approve & Process"
-                : "Reject"}
+                  ? "Approve & Process"
+                  : "Reject"}
             </Button>
           </DialogFooter>
         </DialogContent>

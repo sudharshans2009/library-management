@@ -34,11 +34,11 @@ async function NavbarContent() {
     userConfig?.role === "ADMIN" || userConfig?.role === "MODERATOR";
 
   return (
-    <nav className="bg-background/80 backdrop-blur-md border-b border-border/40 fixed top-0 w-full z-50">
+    <nav className="bg-background/80 backdrop-blur-md border-b border-border/40 fixed top-0 w-full z-50 nav">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex-1 flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-foreground font-bold text-sm">SS</span>
@@ -48,7 +48,7 @@ async function NavbarContent() {
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="flex-1 hidden md:flex items-center justify-center space-x-8">
             <Link
               href="/"
               className="text-foreground/80 hover:text-foreground transition-colors"
@@ -88,7 +88,7 @@ async function NavbarContent() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex-1 flex items-center justify-end space-x-4">
             <ThemeSwitcher />
             {session?.user ? (
               <UserDropdown

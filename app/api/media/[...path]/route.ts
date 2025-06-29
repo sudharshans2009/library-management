@@ -57,10 +57,10 @@ export async function GET(
 // Optional: Add HEAD method for efficient metadata requests
 export async function HEAD(
   request: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
-    const filePath = join(process.cwd(), "media", ...params.path);
+    const filePath = join(process.cwd(), "media", ...(await params).path);
     const mediaDir = join(process.cwd(), "media");
 
     if (!filePath.startsWith(mediaDir)) {

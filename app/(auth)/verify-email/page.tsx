@@ -49,6 +49,7 @@ export default function VerifyEmailPage() {
           setMessage(result.message);
         }
       } catch (error) {
+        console.log("Error:", error);
         setStatus("error");
         setMessage("An unexpected error occurred during verification.");
       }

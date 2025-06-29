@@ -58,7 +58,7 @@ export default async function AdminBookDetailsPage({
       : null;
 
   return (
-    <main className="relative w-full h-full px-5 z-10">
+    <main className="relative w-full px-5 z-10">
       <div className="flex flex-col max-w-7xl pt-24 mx-auto min-h-screen py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

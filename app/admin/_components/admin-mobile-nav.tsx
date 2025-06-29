@@ -16,31 +16,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import {
   LayoutDashboard,
   BookOpen,
   Users,
   FileText,
   MessageSquare,
-  Settings,
   ChevronDown,
   ChevronRight,
-  BarChart3,
   Shield,
   Menu,
   X,
-  Database,
-  Home,
-  Download,
   Upload,
-  Archive,
   Clock,
   CheckCircle,
   AlertTriangle,
-  Activity,
-  User,
-  LogOut,
 } from "lucide-react";
 import { useSession } from "@/lib/auth/client";
 import { useQuery } from "@tanstack/react-query";
@@ -72,10 +62,10 @@ export function AdminMobileNav() {
   const stats = statsData?.data;
 
   const toggleExpanded = (title: string) => {
-    setExpandedItems(prev =>
+    setExpandedItems((prev) =>
       prev.includes(title)
-        ? prev.filter(item => item !== title)
-        : [...prev, title]
+        ? prev.filter((item) => item !== title)
+        : [...prev, title],
     );
   };
 
@@ -109,19 +99,13 @@ export function AdminMobileNav() {
           icon: Upload,
           isActive: pathname === "/admin/books/new",
         },
-        {
-          title: "Categories",
-          url: "/admin/books/categories",
-          icon: Archive,
-          isActive: pathname === "/admin/books/categories",
-        },
       ],
     },
     {
       title: "Users Management",
       url: "/admin/users",
       icon: Users,
-      badge: stats?.pendingUsers > 0 ? stats.pendingUsers : undefined,
+      badge: (stats?.pendingUsers ?? 0) > 0 ? stats?.pendingUsers : undefined,
       items: [
         {
           title: "All Users",
@@ -140,13 +124,15 @@ export function AdminMobileNav() {
           title: "Active Users",
           url: "/admin/users?status=approved",
           icon: CheckCircle,
-          isActive: pathname === "/admin/users" && pathname.includes("approved"),
+          isActive:
+            pathname === "/admin/users" && pathname.includes("approved"),
         },
         {
           title: "Suspended Users",
           url: "/admin/users?status=suspended",
           icon: AlertTriangle,
-          isActive: pathname === "/admin/users" && pathname.includes("suspended"),
+          isActive:
+            pathname === "/admin/users" && pathname.includes("suspended"),
         },
       ],
     },
@@ -167,20 +153,26 @@ export function AdminMobileNav() {
           url: "/admin/records?status=borrowed",
           icon: Clock,
           badge: stats?.activeBorrows,
-          isActive: pathname === "/admin/records" && pathname.includes("borrowed"),
+          isActive:
+            pathname === "/admin/records" && pathname.includes("borrowed"),
         },
         {
           title: "Overdue Books",
           url: "/admin/records?overdue=true",
           icon: AlertTriangle,
-          badge: stats?.overdueBorrows > 0 ? stats.overdueBorrows : undefined,
-          isActive: pathname === "/admin/records" && pathname.includes("overdue"),
+          badge:
+            (stats?.overdueBorrows ?? 0) > 0
+              ? stats?.overdueBorrows
+              : undefined,
+          isActive:
+            pathname === "/admin/records" && pathname.includes("overdue"),
         },
         {
           title: "Returned Books",
           url: "/admin/records?status=returned",
           icon: CheckCircle,
-          isActive: pathname === "/admin/records" && pathname.includes("returned"),
+          isActive:
+            pathname === "/admin/records" && pathname.includes("returned"),
         },
       ],
     },
@@ -188,66 +180,19 @@ export function AdminMobileNav() {
       title: "Requests",
       url: "/admin/requests",
       icon: MessageSquare,
-      badge: stats?.pendingRequests > 0 ? stats.pendingRequests : undefined,
+      badge:
+        (stats?.pendingRequests ?? 0) > 0 ? stats?.pendingRequests : undefined,
       isActive: pathname === "/admin/requests",
-    },
-    {
-      title: "Analytics",
-      url: "/admin/analytics",
-      icon: BarChart3,
-      items: [
-        {
-          title: "Overview",
-          url: "/admin/analytics",
-          icon: BarChart3,
-          isActive: pathname === "/admin/analytics",
-        },
-        {
-          title: "Book Trends",
-          url: "/admin/analytics/books",
-          icon: BookOpen,
-          isActive: pathname === "/admin/analytics/books",
-        },
-        {
-          title: "User Activity",
-          url: "/admin/analytics/users",
-          icon: Activity,
-          isActive: pathname === "/admin/analytics/users",
-        },
-        {
-          title: "Reports",
-          url: "/admin/analytics/reports",
-          icon: Download,
-          isActive: pathname === "/admin/analytics/reports",
-        },
-      ],
-    },
-  ];
-
-  const bottomNavItems: NavItem[] = [
-    {
-      title: "Settings",
-      url: "/admin/settings",
-      icon: Settings,
-      isActive: pathname === "/admin/settings",
-    },
-    {
-      title: "System Health",
-      url: "/admin/system",
-      icon: Database,
-      isActive: pathname === "/admin/system",
-    },
-    {
-      title: "Back to App",
-      url: "/dashboard",
-      icon: Home,
-      isActive: false,
     },
   ];
 
   const userInitials = session?.user?.name
-    ? session.user.name.split(' ').map(n => n[0]).join('').toUpperCase()
-    : 'A';
+    ? session.user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "A";
 
   return (
     <>
@@ -264,7 +209,7 @@ export function AdminMobileNav() {
             </div>
           </div>
 
-          <Drawer classnNme="" open={isOpen} onOpenChange={setIsOpen}>
+          <Drawer open={isOpen} onOpenChange={setIsOpen}>
             <DrawerTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="w-5 h-5" />
@@ -290,9 +235,9 @@ export function AdminMobileNav() {
                       </DrawerDescription>
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setIsOpen(false)}
                   >
                     <X className="w-4 h-4" />
@@ -305,7 +250,9 @@ export function AdminMobileNav() {
                   {navItems.map((item) => {
                     const isExpanded = expandedItems.includes(item.title);
                     const hasItems = item.items && item.items.length > 0;
-                    const isCurrentActive = item.isActive || (item.items?.some(subItem => subItem.isActive));
+                    const isCurrentActive =
+                      item.isActive ||
+                      item.items?.some((subItem) => subItem.isActive);
 
                     return (
                       <div key={item.title}>
@@ -314,14 +261,19 @@ export function AdminMobileNav() {
                             variant="ghost"
                             className={cn(
                               "w-full justify-start gap-3 h-12",
-                              isCurrentActive && "bg-accent"
+                              isCurrentActive && "bg-accent",
                             )}
                             onClick={() => toggleExpanded(item.title)}
                           >
                             <item.icon className="w-5 h-5" />
-                            <span className="flex-1 text-left">{item.title}</span>
+                            <span className="flex-1 text-left">
+                              {item.title}
+                            </span>
                             {item.badge && (
-                              <Badge variant="secondary" className="h-5 px-2 text-xs">
+                              <Badge
+                                variant="secondary"
+                                className="h-5 px-2 text-xs"
+                              >
                                 {item.badge}
                               </Badge>
                             )}
@@ -336,16 +288,21 @@ export function AdminMobileNav() {
                             variant="ghost"
                             className={cn(
                               "w-full justify-start gap-3 h-12",
-                              item.isActive && "bg-accent"
+                              item.isActive && "bg-accent",
                             )}
                             asChild
                             onClick={handleLinkClick}
                           >
                             <Link href={item.url}>
                               <item.icon className="w-5 h-5" />
-                              <span className="flex-1 text-left">{item.title}</span>
+                              <span className="flex-1 text-left">
+                                {item.title}
+                              </span>
                               {item.badge && (
-                                <Badge variant="secondary" className="h-5 px-2 text-xs">
+                                <Badge
+                                  variant="secondary"
+                                  className="h-5 px-2 text-xs"
+                                >
                                   {item.badge}
                                 </Badge>
                               )}
@@ -353,7 +310,7 @@ export function AdminMobileNav() {
                           </Button>
                         )}
 
-                        {hasItems && isExpanded && (
+                        {hasItems && isExpanded && item.items && (
                           <div className="ml-4 mt-1 space-y-1">
                             {item.items.map((subItem) => (
                               <Button
@@ -361,16 +318,21 @@ export function AdminMobileNav() {
                                 variant="ghost"
                                 className={cn(
                                   "w-full justify-start gap-3 h-10 text-sm",
-                                  subItem.isActive && "bg-accent"
+                                  subItem.isActive && "bg-accent",
                                 )}
                                 asChild
                                 onClick={handleLinkClick}
                               >
                                 <Link href={subItem.url}>
                                   <subItem.icon className="w-4 h-4" />
-                                  <span className="flex-1 text-left">{subItem.title}</span>
+                                  <span className="flex-1 text-left">
+                                    {subItem.title}
+                                  </span>
                                   {subItem.badge && (
-                                    <Badge variant="outline" className="h-4 px-1.5 text-xs">
+                                    <Badge
+                                      variant="outline"
+                                      className="h-4 px-1.5 text-xs"
+                                    >
                                       {subItem.badge}
                                     </Badge>
                                   )}
@@ -382,26 +344,6 @@ export function AdminMobileNav() {
                       </div>
                     );
                   })}
-
-                  <Separator className="my-4" />
-
-                  {bottomNavItems.map((item) => (
-                    <Button
-                      key={item.title}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start gap-3 h-12",
-                        item.isActive && "bg-accent"
-                      )}
-                      asChild
-                      onClick={handleLinkClick}
-                    >
-                      <Link href={item.url}>
-                        <item.icon className="w-5 h-5" />
-                        <span className="flex-1 text-left">{item.title}</span>
-                      </Link>
-                    </Button>
-                  ))}
                 </div>
               </ScrollArea>
             </DrawerContent>

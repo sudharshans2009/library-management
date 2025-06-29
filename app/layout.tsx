@@ -8,6 +8,7 @@ import { QueryProvider } from "@/components/providers/query";
 import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/footer";
 import LoadingPage from "./loading";
+import { Render } from "@/components/render";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,10 +23,8 @@ export const metadata = {
 
 export default async function RootLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) {
   return (
     <html
@@ -39,8 +38,9 @@ export default async function RootLayout({
             <ThemeProvider>
               <Navbar />
               {children}
-              {modal}
-              <Footer />
+              <Render>
+                <Footer />
+              </Render>
               <Toaster position="bottom-right" richColors />
             </ThemeProvider>
           </QueryProvider>
