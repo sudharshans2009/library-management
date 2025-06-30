@@ -29,7 +29,9 @@ export default async function AdminRecordsPage({
       <div className="md:hidden flex items-center justify-between p-4 border-b">
         <div>
           <h1 className="text-2xl font-bold">Records</h1>
-          <p className="text-sm text-muted-foreground">Manage library borrow records</p>
+          <p className="text-sm text-muted-foreground">
+            Manage library borrow records
+          </p>
         </div>
       </div>
 

@@ -12,7 +12,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DataTableColumnHeader } from "@/components/datatable/coulumn-header";
 import { DataTableFacetedFilter } from "@/components/datatable/faceted-filters";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -441,7 +441,7 @@ export default function BooksTable() {
   });
 
   // Build search options from filters and pagination
-  const searchOptions = useMemo((): BookSearchOptions => {
+  const searchOptions = ((): BookSearchOptions => {
     const options: BookSearchOptions = {
       page: pagination.pageIndex + 1,
       limit: pagination.pageSize,
@@ -469,7 +469,7 @@ export default function BooksTable() {
     }
 
     return options;
-  }, [pagination, globalFilter, columnFilters, sorting]);
+  })();
 
   const query = useQuery({
     queryKey: ["admin", "books", searchOptions],

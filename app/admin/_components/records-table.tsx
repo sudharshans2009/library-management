@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -13,7 +12,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DataTableColumnHeader } from "@/components/datatable/coulumn-header";
 import { DataTableFacetedFilter } from "@/components/datatable/faceted-filters";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -334,7 +333,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
   });
 
   // Build search options from filters and pagination
-  const searchOptions = useMemo((): RecordSearchOptions => {
+  const searchOptions = ((): RecordSearchOptions => {
     const options: RecordSearchOptions = {
       bookId: searchParams.bookId || undefined,
       page: pagination.pageIndex + 1,
@@ -357,7 +356,7 @@ export default function RecordsTable({ searchParams }: RecordsTableProps) {
     }
 
     return options;
-  }, [pagination, globalFilter, columnFilters, sorting]);
+  })();
 
   const query = useQuery({
     queryKey: ["admin", "records", searchOptions],
