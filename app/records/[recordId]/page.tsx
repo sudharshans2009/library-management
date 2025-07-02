@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Star,
   FileText,
+  Download,
 } from "lucide-react";
 import { Background } from "@/components/background";
 import { Badge } from "@/components/ui/badge";
@@ -189,6 +190,13 @@ export default async function RecordPage({
                   My Requests
                 </Button>
               </Link>
+
+              <Link href={`/records/${record.id}/info`}>
+                <Button variant="outline" size="lg">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Get Record
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -343,6 +351,16 @@ export default async function RecordPage({
                     >
                       <FileText className="w-4 h-4 mr-2" />
                       View All Requests
+                    </Button>
+                  </Link>
+                  <Link href={`/records/${record.id}/info`} className="block">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Get Record Info
                     </Button>
                   </Link>
                 </div>

@@ -11,9 +11,9 @@ export default async function AdminRecordsPage({
   searchParams,
 }: AdminRecordsPageProps) {
   return (
-    <div className="pt-16 flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Desktop Header */}
-      <div className="hidden md:flex items-center justify-between p-4 border-b">
+      <div className="hidden md:flex items-center justify-between p-4 border-b flex-shrink-0">
         <div className="flex items-center gap-2">
           <SidebarTrigger />
           <div>
@@ -26,7 +26,7 @@ export default async function AdminRecordsPage({
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b">
+      <div className="md:hidden flex items-center justify-between p-4 border-b flex-shrink-0">
         <div>
           <h1 className="text-2xl font-bold">Records</h1>
           <p className="text-sm text-muted-foreground">
@@ -35,9 +35,11 @@ export default async function AdminRecordsPage({
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 p-4 md:p-6">
-        <RecordsTable searchParams={await searchParams} />
+      {/* Content - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full p-4 md:p-6">
+          <RecordsTable searchParams={await searchParams} />
+        </div>
       </div>
     </div>
   );

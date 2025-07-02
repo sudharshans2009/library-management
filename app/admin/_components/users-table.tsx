@@ -491,7 +491,7 @@ export default function UsersTable() {
 
   if (query.isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto px-5">
+      <div className="flex flex-col items-center justify-center h-64">
         <div className="text-center space-y-4">
           <div className="relative">
             <div className="w-20 h-20 bg-primary/10 rounded-full animate-pulse mx-auto"></div>
@@ -515,9 +515,9 @@ export default function UsersTable() {
   }
 
   return (
-    <div className="w-full space-y-4">
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+    <div className="h-full flex flex-col space-y-4">
+      {/* Search and Filters - Fixed */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between flex-shrink-0">
         <div className="relative w-full sm:max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -571,8 +571,8 @@ export default function UsersTable() {
         </div>
       </div>
 
-      {/* Export Button */}
-      <div className="flex justify-end">
+      {/* Export Button - Fixed */}
+      <div className="flex justify-end flex-shrink-0">
         <Button
           variant="outline"
           size="sm"
@@ -588,58 +588,60 @@ export default function UsersTable() {
         </Button>
       </div>
 
-      {/* Data Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
+      {/* Data Table - Scrollable */}
+      <div className="flex-1 overflow-auto">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader className="sticky top-0 bg-background z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No users found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No users found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between space-x-2 py-4">
+      {/* Pagination - Fixed */}
+      <div className="flex items-center justify-between space-x-2 py-4 flex-shrink-0">
         <div className="flex-1 text-sm text-muted-foreground">
           {query.data?.data && (
             <>

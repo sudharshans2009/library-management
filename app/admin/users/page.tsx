@@ -3,9 +3,9 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function AdminUsersPage() {
   return (
-    <div className="pt-16 flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Desktop Header */}
-      <div className="hidden md:flex items-center justify-between p-4 border-b">
+      <div className="hidden md:flex items-center justify-between p-4 border-b flex-shrink-0">
         <div className="flex items-center gap-2">
           <SidebarTrigger />
           <div>
@@ -18,16 +18,18 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b">
+      <div className="md:hidden flex items-center justify-between p-4 border-b flex-shrink-0">
         <div>
           <h1 className="text-2xl font-bold">Users</h1>
           <p className="text-sm text-muted-foreground">Manage library users</p>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 p-4 md:p-6">
-        <UsersTable />
+      {/* Content - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full p-4 md:p-6">
+          <UsersTable />
+        </div>
       </div>
     </div>
   );
