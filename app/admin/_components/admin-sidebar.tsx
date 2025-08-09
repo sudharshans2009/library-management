@@ -1,4 +1,3 @@
-// app/admin/_components/admin-sidebar.tsx
 "use client";
 
 import { useState } from "react";

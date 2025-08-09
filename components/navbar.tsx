@@ -1,4 +1,3 @@
-// components/navbar.tsx
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -10,24 +9,40 @@ import { eq } from "drizzle-orm";
 import { User } from "lucide-react";
 import UserDropdown from "./user-dropdown";
 import { ThemeSwitcher } from "./theme-switcher";
+import { safeDbQuery } from "@/lib/database-utils";
 
 async function NavbarContent() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session: { user: { id: string; name: string; email: string } } | null = null;
+  let userConfig: { role?: string } | null = null;
 
-  let userConfig = null;
-  if (session?.user) {
-    try {
-      const [dbConfig] = await db
-        .select()
-        .from(config)
-        .where(eq(config.userId, session.user.id))
-        .limit(1);
-      userConfig = dbConfig;
-    } catch (error) {
-      console.error("Error fetching user config:", error);
+  try {
+    // Try to get session with timeout
+    session = await Promise.race([
+      auth.api.getSession({
+        headers: await headers(),
+      }),
+      new Promise<null>((_, reject) => 
+        setTimeout(() => reject(new Error('Session timeout')), 15000)
+      )
+    ]);
+
+    if (session?.user) {
+      // Use safe database query with fallback
+      userConfig = await safeDbQuery(
+        async () => {
+          const [dbConfig] = await db
+            .select()
+            .from(config)
+            .where(eq(config.userId, session!.user.id))
+            .limit(1);
+          return dbConfig || null;
+        },
+        null // fallback value
+      );
     }
+  } catch (error) {
+    console.error("Error getting session:", error);
+    // Continue without session - app should still work for public pages
   }
 
   const isAdmin =
@@ -89,7 +104,7 @@ async function NavbarContent() {
 
           {/* Right side */}
           <div className="flex-1 flex items-center justify-end space-x-4">
-            <ThemeSwitcher />
+            <ThemeSwitcher suppressHydrationWarning />
             {session?.user ? (
               <UserDropdown
                 user={session.user}

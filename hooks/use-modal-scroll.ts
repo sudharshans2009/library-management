@@ -1,4 +1,3 @@
-// hooks/use-modal-scroll.ts
 "use client";
 
 import { useEffect } from "react";

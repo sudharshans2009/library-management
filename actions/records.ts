@@ -177,14 +177,26 @@ export async function approveRecord(recordId: string): Promise<{
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
 
-    // Execute approval in transaction
-    await db.transaction(async () => {
+    // Execute approval operations sequentially
+    try {
       // Update borrow record status and due date
       await updateBorrowRecordStatus(recordId, "BORROWED");
 
       // Decrease book availability
       await updateBookAvailability(record.bookId, -1);
-    });
+    } catch (operationError) {
+      // If any operation fails, we need to handle it gracefully
+      console.error("Error during approval operations:", operationError);
+      
+      // Try to revert the record status if book availability update failed
+      try {
+        await updateBorrowRecordStatus(recordId, "PENDING");
+      } catch (revertError) {
+        console.error("Failed to revert record status:", revertError);
+      }
+      
+      throw new Error("Failed to complete approval process");
+    }
 
     revalidatePath("/admin/records");
     return {
@@ -256,14 +268,26 @@ export async function returnRecord(recordId: string): Promise<{
 
     const returnDate = new Date().toISOString().split("T")[0];
 
-    // Execute return in transaction
-    await db.transaction(async () => {
+    // Execute return operations sequentially
+    try {
       // Update record with return date and status
       await updateBorrowRecordStatus(recordId, "RETURNED", returnDate);
 
       // Increase available copies
       await updateBookAvailability(record.bookId, 1);
-    });
+    } catch (operationError) {
+      // If any operation fails, we need to handle it gracefully
+      console.error("Error during return operations:", operationError);
+      
+      // Try to revert the record status if book availability update failed
+      try {
+        await updateBorrowRecordStatus(recordId, "BORROWED");
+      } catch (revertError) {
+        console.error("Failed to revert record status:", revertError);
+      }
+      
+      throw new Error("Failed to complete return process");
+    }
 
     revalidatePath("/admin/records");
     return {

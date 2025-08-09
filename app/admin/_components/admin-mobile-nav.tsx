@@ -1,4 +1,3 @@
-// app/admin/_components/admin-mobile-nav.tsx
 "use client";
 
 import { useState } from "react";

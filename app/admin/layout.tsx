@@ -1,4 +1,3 @@
-// app/admin/layout.tsx
 import { Suspense } from "react";
 import { AdminSidebar } from "./_components/admin-sidebar";
 import { AdminMobileNav } from "./_components/admin-mobile-nav";

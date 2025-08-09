@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// actions/requests.ts
 "use server";
 
 import {
@@ -13,8 +12,8 @@ import {
   type RequestWithDetails,
 } from "@/lib/services/requests";
 import { db } from "@/database/drizzle";
-import { config, borrowRecords, books } from "@/database/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { config, borrowRecords, books, requests, user } from "@/database/schema";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/main";
 import { headers } from "next/headers";
@@ -444,6 +443,182 @@ export async function getUserBorrowRecords(): Promise<{
     return {
       success: false,
       message: "Failed to fetch borrow records",
+    };
+  }
+}
+
+export async function getAdminRequests(options: {
+  status?: string;
+  type?: string;
+  page?: number;
+  limit?: number;
+} = {}) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return {
+        success: false,
+        message: "Authentication required",
+      };
+    }
+
+    // Check if user is admin/moderator
+    const [userConfig] = await db
+      .select()
+      .from(config)
+      .where(eq(config.userId, session.user.id))
+      .limit(1);
+
+    if (!userConfig || !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
+      return {
+        success: false,
+        message: "Admin access required",
+      };
+    }
+
+    const { status, type, page = 1, limit = 10 } = options;
+    const offset = (page - 1) * limit;
+
+    // Build query conditions
+    const conditions = [];
+    if (status) {
+      conditions.push(eq(requests.status, status as any));
+    }
+    if (type) {
+      conditions.push(eq(requests.type, type));
+    }
+
+    // Get requests with user info
+    const [requestsData, totalResult] = await Promise.all([
+      db
+        .select({
+          id: requests.id,
+          type: requests.type,
+          title: requests.reason, // Using reason as title since there's no title field
+          description: requests.description,
+          status: requests.status,
+          priority: "MEDIUM" as const, // Default priority since not in schema
+          createdAt: requests.createdAt,
+          adminResponse: requests.adminResponse,
+          adminId: requests.adminId,
+          respondedAt: requests.resolvedAt,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
+        })
+        .from(requests)
+        .innerJoin(user, eq(requests.userId, user.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(requests.createdAt))
+        .limit(limit)
+        .offset(offset),
+      
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(requests)
+        .where(conditions.length > 0 ? and(...conditions) : undefined),
+    ]);
+
+    // Add admin names separately if needed
+    const requestsWithAdmin = await Promise.all(
+      requestsData.map(async (req) => {
+        let admin = null;
+        if (req.adminId) {
+          const [adminData] = await db
+            .select({ name: user.name })
+            .from(user)
+            .where(eq(user.id, req.adminId))
+            .limit(1);
+          admin = adminData || null;
+        }
+        return {
+          ...req,
+          admin,
+        };
+      })
+    );
+
+    const total = totalResult[0]?.count || 0;
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      success: true,
+      data: {
+        requests: requestsWithAdmin,
+        total,
+        page,
+        totalPages,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching admin requests:", error);
+    return {
+      success: false,
+      message: "Failed to fetch requests",
+    };
+  }
+}
+
+export async function adminRespondToRequest({
+  requestId,
+  status,
+  response,
+}: {
+  requestId: string;
+  status: "APPROVED" | "REJECTED";
+  response?: string;
+}) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return {
+        success: false,
+        message: "Authentication required",
+      };
+    }
+
+    // Check if user is admin/moderator
+    const [userConfig] = await db
+      .select()
+      .from(config)
+      .where(eq(config.userId, session.user.id))
+      .limit(1);
+
+    if (!userConfig || !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
+      return {
+        success: false,
+        message: "Admin access required",
+      };
+    }
+
+    // Update the request
+    await db
+      .update(requests)
+      .set({
+        status,
+        adminResponse: response,
+        adminId: session.user.id,
+        resolvedAt: new Date(),
+      })
+      .where(eq(requests.id, requestId));
+
+    return {
+      success: true,
+      message: `Request ${status.toLowerCase()} successfully`,
+    };
+  } catch (error) {
+    console.error("Error responding to request:", error);
+    return {
+      success: false,
+      message: "Failed to respond to request",
     };
   }
 }

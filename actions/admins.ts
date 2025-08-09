@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// filepath: c:\Users\bsoun\Documents\Codebase\library-management-v2\actions\admin-users.ts
 "use server";
 
 import { auth } from "@/lib/auth/main";

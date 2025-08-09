@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/admin/user-management.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
