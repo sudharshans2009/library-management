@@ -12,9 +12,10 @@ import { Render } from "@/components/render";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
 });
-
 export const metadata = {
   description:
     "Advanced Library Management System with user authentication and book borrowing.",
