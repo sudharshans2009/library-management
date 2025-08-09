@@ -12,7 +12,13 @@ import {
   type RequestWithDetails,
 } from "@/lib/services/requests";
 import { db } from "@/database/drizzle";
-import { config, borrowRecords, books, requests, user } from "@/database/schema";
+import {
+  config,
+  borrowRecords,
+  books,
+  requests,
+  user,
+} from "@/database/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/main";
@@ -447,12 +453,14 @@ export async function getUserBorrowRecords(): Promise<{
   }
 }
 
-export async function getAdminRequests(options: {
-  status?: string;
-  type?: string;
-  page?: number;
-  limit?: number;
-} = {}) {
+export async function getAdminRequests(
+  options: {
+    status?: string;
+    type?: string;
+    page?: number;
+    limit?: number;
+  } = {},
+) {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -472,7 +480,10 @@ export async function getAdminRequests(options: {
       .where(eq(config.userId, session.user.id))
       .limit(1);
 
-    if (!userConfig || !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
+    if (
+      !userConfig ||
+      !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")
+    ) {
       return {
         success: false,
         message: "Admin access required",
@@ -517,7 +528,7 @@ export async function getAdminRequests(options: {
         .orderBy(desc(requests.createdAt))
         .limit(limit)
         .offset(offset),
-      
+
       db
         .select({ count: sql<number>`count(*)` })
         .from(requests)
@@ -540,7 +551,7 @@ export async function getAdminRequests(options: {
           ...req,
           admin,
         };
-      })
+      }),
     );
 
     const total = totalResult[0]?.count || 0;
@@ -592,7 +603,10 @@ export async function adminRespondToRequest({
       .where(eq(config.userId, session.user.id))
       .limit(1);
 
-    if (!userConfig || !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")) {
+    if (
+      !userConfig ||
+      !["ADMIN", "MODERATOR"].includes(userConfig.role || "USER")
+    ) {
       return {
         success: false,
         message: "Admin access required",

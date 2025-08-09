@@ -4,7 +4,7 @@ import { checkDatabaseHealth } from "@/lib/database-utils";
 export async function GET() {
   try {
     const health = await checkDatabaseHealth();
-    
+
     return NextResponse.json(
       {
         status: health.healthy ? "healthy" : "unhealthy",
@@ -15,7 +15,7 @@ export async function GET() {
           error: health.error,
         },
       },
-      { status: health.healthy ? 200 : 503 }
+      { status: health.healthy ? 200 : 503 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -24,7 +24,7 @@ export async function GET() {
         timestamp: new Date().toISOString(),
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

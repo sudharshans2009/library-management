@@ -19,9 +19,18 @@ export function ThemeSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          {theme === "light" && <Sun suppressHydrationWarning className="h-[1.2rem] w-[1.2rem]" />}
-          {theme === "dark" && <Moon suppressHydrationWarning className="h-[1.2rem] w-[1.2rem]" />}
-          {theme === "system" && <Monitor suppressHydrationWarning className="h-[1.2rem] w-[1.2rem]" />}
+          {theme === "light" && (
+            <Sun suppressHydrationWarning className="h-[1.2rem] w-[1.2rem]" />
+          )}
+          {theme === "dark" && (
+            <Moon suppressHydrationWarning className="h-[1.2rem] w-[1.2rem]" />
+          )}
+          {theme === "system" && (
+            <Monitor
+              suppressHydrationWarning
+              className="h-[1.2rem] w-[1.2rem]"
+            />
+          )}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

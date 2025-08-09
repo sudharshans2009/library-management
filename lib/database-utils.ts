@@ -12,7 +12,7 @@ interface RetryOptions {
  */
 export async function executeWithRetry<T>(
   queryFn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
@@ -29,14 +29,17 @@ export async function executeWithRetry<T>(
       const result = await Promise.race([
         queryFn(),
         new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error(`Database query timeout (${timeout}ms)`)), timeout);
+          setTimeout(
+            () => reject(new Error(`Database query timeout (${timeout}ms)`)),
+            timeout,
+          );
         }),
       ]);
 
       return result;
     } catch (error) {
       lastError = error as Error;
-      
+
       // Don't retry on certain types of errors
       if (isNonRetryableError(error)) {
         throw error;
@@ -49,14 +52,14 @@ export async function executeWithRetry<T>(
 
       // Calculate delay with exponential backoff
       const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
-      
+
       console.warn(
         `Database query attempt ${attempt + 1}/${maxRetries + 1} failed. Retrying in ${delay}ms...`,
-        error
+        error,
       );
 
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 
@@ -70,20 +73,20 @@ function isNonRetryableError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
 
   const message = error.message.toLowerCase();
-  
+
   // Don't retry on these types of errors
   const nonRetryablePatterns = [
-    'syntax error',
-    'invalid input',
-    'constraint violation',
-    'unique constraint',
-    'foreign key constraint',
-    'not null constraint',
-    'authentication failed',
-    'permission denied',
+    "syntax error",
+    "invalid input",
+    "constraint violation",
+    "unique constraint",
+    "foreign key constraint",
+    "not null constraint",
+    "authentication failed",
+    "permission denied",
   ];
 
-  return nonRetryablePatterns.some(pattern => message.includes(pattern));
+  return nonRetryablePatterns.some((pattern) => message.includes(pattern));
 }
 
 /**
@@ -91,7 +94,7 @@ function isNonRetryableError(error: unknown): boolean {
  */
 export async function safeDbQuery<T>(
   queryFn: () => Promise<T>,
-  fallback?: T
+  fallback?: T,
 ): Promise<T | undefined> {
   try {
     return await executeWithRetry(queryFn, {
@@ -100,7 +103,7 @@ export async function safeDbQuery<T>(
       timeout: 10000,
     });
   } catch (error) {
-    console.error('Database query failed after retries:', error);
+    console.error("Database query failed after retries:", error);
     return fallback;
   }
 }
@@ -114,7 +117,7 @@ export async function checkDatabaseHealth(): Promise<{
   error?: string;
 }> {
   const startTime = Date.now();
-  
+
   try {
     await executeWithRetry(
       async () => {
@@ -125,15 +128,15 @@ export async function checkDatabaseHealth(): Promise<{
       {
         maxRetries: 1,
         timeout: 5000,
-      }
+      },
     );
-    
+
     const latency = Date.now() - startTime;
     return { healthy: true, latency };
   } catch (error) {
     return {
       healthy: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }

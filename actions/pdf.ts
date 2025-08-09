@@ -53,7 +53,7 @@ export async function generateShareableLink(recordId: string): Promise<{
 
     // Check if user owns this record or is admin
     const isOwner = record.userId === session.user.id;
-    
+
     // Check if user is admin/moderator
     const [userConfig] = await db
       .select()
@@ -61,7 +61,8 @@ export async function generateShareableLink(recordId: string): Promise<{
       .where(eq(config.userId, session.user.id))
       .limit(1);
 
-    const isAdmin = userConfig && ["ADMIN", "MODERATOR"].includes(userConfig.role || "USER");
+    const isAdmin =
+      userConfig && ["ADMIN", "MODERATOR"].includes(userConfig.role || "USER");
 
     if (!isOwner && !isAdmin) {
       return {
@@ -101,7 +102,10 @@ export async function generateShareableLink(recordId: string): Promise<{
   }
 }
 
-export async function validateShareableKey(recordId: string, key: string): Promise<{
+export async function validateShareableKey(
+  recordId: string,
+  key: string,
+): Promise<{
   success: boolean;
   data?: ShareableRecord;
   message?: string;
@@ -144,7 +148,10 @@ export async function validateShareableKey(recordId: string, key: string): Promi
   }
 }
 
-export async function getRecordForPDF(recordId: string, shareKey?: string): Promise<{
+export async function getRecordForPDF(
+  recordId: string,
+  shareKey?: string,
+): Promise<{
   success: boolean;
   data?: {
     record: any;
@@ -193,14 +200,16 @@ export async function getRecordForPDF(recordId: string, shareKey?: string): Prom
 
       // Check if user owns this record or is admin
       const isOwner = record.userId === session.user.id;
-      
+
       const [userConfig] = await db
         .select()
         .from(config)
         .where(eq(config.userId, session.user.id))
         .limit(1);
 
-      const isAdmin = userConfig && ["ADMIN", "MODERATOR"].includes(userConfig.role || "USER");
+      const isAdmin =
+        userConfig &&
+        ["ADMIN", "MODERATOR"].includes(userConfig.role || "USER");
 
       if (!isOwner && !isAdmin) {
         return {

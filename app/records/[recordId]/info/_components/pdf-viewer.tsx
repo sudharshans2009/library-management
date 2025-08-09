@@ -84,10 +84,10 @@ export default function PDFViewer({
   const today = new Date();
 
   const daysBorrowed = Math.floor(
-    (today.getTime() - borrowDate.getTime()) / (1000 * 60 * 60 * 24)
+    (today.getTime() - borrowDate.getTime()) / (1000 * 60 * 60 * 24),
   );
   const daysUntilDue = Math.floor(
-    (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
   );
   const isOverdue = !returnDate && daysUntilDue < 0;
   const isReturned = !!returnDate;

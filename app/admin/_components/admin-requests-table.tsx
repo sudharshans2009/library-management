@@ -78,7 +78,9 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [response, setResponse] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<"APPROVED" | "REJECTED" | null>(null);
+  const [actionType, setActionType] = useState<"APPROVED" | "REJECTED" | null>(
+    null,
+  );
 
   const queryClient = useQueryClient();
 
@@ -116,11 +118,26 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
   const getStatusBadge = (status: Request["status"]) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-600">Pending</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="text-yellow-600 border-yellow-600"
+          >
+            Pending
+          </Badge>
+        );
       case "APPROVED":
-        return <Badge variant="outline" className="text-green-600 border-green-600">Approved</Badge>;
+        return (
+          <Badge variant="outline" className="text-green-600 border-green-600">
+            Approved
+          </Badge>
+        );
       case "REJECTED":
-        return <Badge variant="outline" className="text-red-600 border-red-600">Rejected</Badge>;
+        return (
+          <Badge variant="outline" className="text-red-600 border-red-600">
+            Rejected
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
@@ -131,7 +148,14 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
       case "HIGH":
         return <Badge variant="destructive">High</Badge>;
       case "MEDIUM":
-        return <Badge variant="outline" className="text-orange-600 border-orange-600">Medium</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="text-orange-600 border-orange-600"
+          >
+            Medium
+          </Badge>
+        );
       case "LOW":
         return <Badge variant="secondary">Low</Badge>;
       default:
@@ -229,13 +253,17 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
                           {request.status === "PENDING" && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => handleRespond(request, "APPROVED")}
+                                onClick={() =>
+                                  handleRespond(request, "APPROVED")
+                                }
                               >
                                 <CheckCircle className="w-4 h-4 mr-2" />
                                 Approve
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleRespond(request, "REJECTED")}
+                                onClick={() =>
+                                  handleRespond(request, "REJECTED")
+                                }
                               >
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Reject
@@ -263,7 +291,8 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
             <DialogHeader>
               <DialogTitle>{selectedRequest.title}</DialogTitle>
               <DialogDescription>
-                Request #{selectedRequest.id.slice(0, 8)} • {selectedRequest.type}
+                Request #{selectedRequest.id.slice(0, 8)} •{" "}
+                {selectedRequest.type}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -273,7 +302,7 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
                   {selectedRequest.description}
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold mb-1">Submitted by</h4>
@@ -303,9 +332,12 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
                     <p className="text-xs text-muted-foreground mt-1">
                       Responded by {selectedRequest.admin.name} •{" "}
                       {selectedRequest.respondedAt &&
-                        formatDistanceToNow(new Date(selectedRequest.respondedAt), {
-                          addSuffix: true,
-                        })}
+                        formatDistanceToNow(
+                          new Date(selectedRequest.respondedAt),
+                          {
+                            addSuffix: true,
+                          },
+                        )}
                     </p>
                   )}
                 </div>
@@ -351,7 +383,8 @@ export default function AdminRequestsTable({ data }: AdminRequestsTableProps) {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">
-                Response {actionType === "REJECTED" ? "(Required)" : "(Optional)"}
+                Response{" "}
+                {actionType === "REJECTED" ? "(Required)" : "(Optional)"}
               </label>
               <Textarea
                 value={response}

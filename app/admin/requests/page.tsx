@@ -68,7 +68,7 @@ export default async function AdminRequestsPage({
       <div className="flex-1 overflow-hidden">
         <div className="h-full p-4 md:p-6">
           <Suspense fallback={<RequestsTableSkeleton />}>
-            <RequestsContent 
+            <RequestsContent
               status={status}
               type={type}
               page={page}
@@ -103,7 +103,9 @@ async function RequestsContent({
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-destructive">Error loading requests: {result.message}</p>
+          <p className="text-destructive">
+            Error loading requests: {result.message}
+          </p>
         </CardContent>
       </Card>
     );
@@ -136,7 +138,8 @@ function RequestsTableSkeleton() {
 export const metadata = {
   title: "Manage Requests - Admin | SS.library",
   description: "Review and respond to user requests for library services",
-};export default async function AdminRequestsPage({
+};
+export default async function AdminRequestsPage({
   searchParams,
 }: AdminRequestsPageProps) {
   const params = await searchParams;
@@ -212,7 +215,9 @@ async function RequestsContent({
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-destructive">Error loading requests: {result.message}</p>
+          <p className="text-destructive">
+            Error loading requests: {result.message}
+          </p>
         </CardContent>
       </Card>
     );

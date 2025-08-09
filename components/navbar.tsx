@@ -12,7 +12,8 @@ import { ThemeSwitcher } from "./theme-switcher";
 import { safeDbQuery } from "@/lib/database-utils";
 
 async function NavbarContent() {
-  let session: { user: { id: string; name: string; email: string } } | null = null;
+  let session: { user: { id: string; name: string; email: string } } | null =
+    null;
   let userConfig: { role?: string } | null = null;
 
   try {
@@ -21,9 +22,9 @@ async function NavbarContent() {
       auth.api.getSession({
         headers: await headers(),
       }),
-      new Promise<null>((_, reject) => 
-        setTimeout(() => reject(new Error('Session timeout')), 15000)
-      )
+      new Promise<null>((_, reject) =>
+        setTimeout(() => reject(new Error("Session timeout")), 15000),
+      ),
     ]);
 
     if (session?.user) {
@@ -37,7 +38,7 @@ async function NavbarContent() {
             .limit(1);
           return dbConfig || null;
         },
-        null // fallback value
+        null, // fallback value
       );
     }
   } catch (error) {

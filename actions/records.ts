@@ -187,14 +187,14 @@ export async function approveRecord(recordId: string): Promise<{
     } catch (operationError) {
       // If any operation fails, we need to handle it gracefully
       console.error("Error during approval operations:", operationError);
-      
+
       // Try to revert the record status if book availability update failed
       try {
         await updateBorrowRecordStatus(recordId, "PENDING");
       } catch (revertError) {
         console.error("Failed to revert record status:", revertError);
       }
-      
+
       throw new Error("Failed to complete approval process");
     }
 
@@ -278,14 +278,14 @@ export async function returnRecord(recordId: string): Promise<{
     } catch (operationError) {
       // If any operation fails, we need to handle it gracefully
       console.error("Error during return operations:", operationError);
-      
+
       // Try to revert the record status if book availability update failed
       try {
         await updateBorrowRecordStatus(recordId, "BORROWED");
       } catch (revertError) {
         console.error("Failed to revert record status:", revertError);
       }
-      
+
       throw new Error("Failed to complete return process");
     }
 
