@@ -105,7 +105,7 @@ async function NavbarContent() {
 
           {/* Right side */}
           <div className="flex-1 flex items-center justify-end space-x-4">
-            <ThemeSwitcher suppressHydrationWarning />
+            <ThemeSwitcher />
             {session?.user ? (
               <UserDropdown
                 user={session.user}
